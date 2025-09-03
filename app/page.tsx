@@ -61,12 +61,12 @@ function App() {
 
   return (
     <>
-      <div className='flex flex-col min-h-screen w-full'>
+      <div className="flex flex-col min-h-screen w-full">
         {/* hero */}
-        <div className='flex flex-col md:flex-row items-center justify-around pt-25 bp-5 px-12 bg-[#0A001B]'>
-          <div className='md:w-1/2 text-center md:text-left'>
-            <h1 className='text-green-400 text-7xl py-4'>Welcome .</h1>
-            <p className='text-white text-10 py-4'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita accusantium voluptatibus, facere maxime fugit non iste saepe quod incidunt consectetur ex accusamus quos ipsum eum mollitia assumenda. Eius sit, illo enim est ipsum ex provident minima cupiditate vero odit nihil nam sunt tempore, veritatis excepturi voluptatibus deleniti nulla! Modi itaque aspernatur expedita consectetur ipsam. Rem repellendus nemo temporibus omnis quasi ratione cupiditate corrupti dolore rerum quo facilis assumenda optio eaque dolor architecto maxime, debitis inventore? In enim maxime recusandae dolor temporibus id doloribus nisi omnis? Fugit, recusandae amet neque ipsa quidem quia harum aliquid delectus saepe repudiandae. Aspernatur, ipsa soluta?</p>
+        <div className="flex flex-col md:flex-row items-center justify-around pt-25 bp-5 px-12 bg-[#0A001B]">
+          <div className="md:w-1/2 text-center md:text-left">
+            <h1 className="text-green-400 text-7xl py-4">Welcome .</h1>
+            <p className="text-white text-10 py-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita accusantium voluptatibus, facere maxime fugit non iste saepe quod incidunt consectetur ex accusamus quos ipsum eum mollitia assumenda. Eius sit, illo enim est ipsum ex provident minima cupiditate vero odit nihil nam sunt tempore, veritatis excepturi voluptatibus deleniti nulla! Modi itaque aspernatur expedita consectetur ipsam. Rem repellendus nemo temporibus omnis quasi ratione cupiditate corrupti dolore rerum quo facilis assumenda optio eaque dolor architecto maxime, debitis inventore? In enim maxime recusandae dolor temporibus id doloribus nisi omnis? Fugit, recusandae amet neque ipsa quidem quia harum aliquid delectus saepe repudiandae. Aspernatur, ipsa soluta?</p>
           </div>
           <div>
             <img src="/assets/images/main.png" alt="phone" width={300} height={300} />
@@ -81,13 +81,13 @@ function App() {
         </div>
 
         {/* Portfolio Section */}
-        <div className='bg-gray-50 w-full flex-grow'>
-          <div className='py-20 px-6 md:px-12 lg:px-16'>
-            <div className='text-center mb-16'>
-              <span className='text-green-500 text-sm font-medium uppercase tracking-wider'>Portfolio</span>
-              <h2 className='text-gray-900 text-4xl lg:text-5xl font-bold mt-2 mb-4'>Featured Projects</h2>
-              <p className='text-gray-600 text-lg max-w-2xl mx-auto'>
-                Here's a selection of projects I've worked on, showcasing different technologies and problem-solving approaches.
+        <div className="bg-gray-50 w-full flex-grow">
+          <div className="py-20 px-6 md:px-12 lg:px-16">
+            <div className="text-center mb-16">
+              <span className="text-green-500 text-sm font-medium uppercase tracking-wider">Portfolio</span>
+              <h2 className="text-gray-900 text-4xl lg:text-5xl font-bold mt-2 mb-4">Featured Projects</h2>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                Here&apos;s a selection of projects I&apos;ve worked on, showcasing different technologies and problem-solving approaches.
               </p>
             </div>
 
@@ -117,10 +117,10 @@ function App() {
         {/* CTA Section */}
         <div className="bg-gradient-to-r from-[#0A001B] to-[#1a0a2e] text-white py-20 px-6 md:px-12 lg:px-16">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">Let's Build Something Amazing</h2>
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6">Let&apos;s Build Something Amazing</h2>
             <p className="text-gray-300 text-lg lg:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
               Have a project in mind or looking for a dedicated developer to join your team?
-              I'm currently available for freelance work and exciting opportunities.
+              I&apos;m currently available for freelance work and exciting opportunities.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <a href="mailto:your.email@example.com" className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 inline-block">
