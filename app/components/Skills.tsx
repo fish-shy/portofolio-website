@@ -27,7 +27,7 @@ export default function Skills() {
             Technical Skills
           </h2>
           <p className="text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
-            A comprehensive overview of technologies and tools I've worked with
+            A comprehensive overview of technologies and tools I have worked with
           </p>
         </div>
 

@@ -34,7 +34,7 @@ export default function Experience() {
             Professional Experience
           </h2>
           <p className="text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
-            My professional journey and the impact I've made
+            My professional journey and the impact I have made
           </p>
         </div>
 
