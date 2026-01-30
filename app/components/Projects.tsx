@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 export default function Projects() {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -10,7 +11,7 @@ export default function Projects() {
       id: 1,
       title: "Village Budget Monitoring System",
       description: "AI-Powered system for Permikomnas Hackathon 2025. Utilizes OpenRouter for AI integration and PrismaDB for robust data management. Secured 2nd Place.",
-      image: "🏘️",
+      image: "/assets/images/sipandai.png",
       technologies: ["Next.js", "PrismaDB", "OpenRouter AI", "Tailwind CSS"],
       category: "web",
       link: "#",
@@ -20,7 +21,7 @@ export default function Projects() {
       id: 2,
       title: "CLINICALgo",
       description: "Comprehensive web-based Clinic Management System (CMS) for patient administration, EMR, pharmacy inventory, and billing.",
-      image: "🏥",
+      image: "/assets/images/clinicalgo.png",
       technologies: ["Web Application", "QA Testing", "Clinic Management"],
       category: "enterprise",
       link: "#",
@@ -30,7 +31,7 @@ export default function Projects() {
       id: 3,
       title: "E-Learning Mobile App",
       description: "Cross-platform mobile app for digital education. Connecting Students, Teachers, and Admins. Built with Flutter and ExpressJS.",
-      image: "📱",
+      image: "/assets/images/learnfy.png",
       technologies: ["Flutter", "GetX", "ExpressJS", "Google Cloud", "Supabase"],
       category: "mobile",
       link: "#",
@@ -40,7 +41,7 @@ export default function Projects() {
       id: 4,
       title: "Ankrah Studios Website V3.0",
       description: "End-to-end development of Ankrah Studios website. Designed interfaces in Figma and implemented using WordPress.",
-      image: "🎨",
+      image: "/assets/images/ankrah.png",
       technologies: ["WordPress", "Figma", "UI/UX", "CSS"],
       category: "web",
       link: "#",
@@ -50,7 +51,7 @@ export default function Projects() {
       id: 5,
       title: "DEW Company Profile",
       description: "Company profile website for PT Daya Energi Warukin (coal exporter). Designed high-fidelity UI and implemented on WordPress.",
-      image: "⛏️",
+      image: "/assets/images/dew.png",
       technologies: ["WordPress", "Figma", "UI/UX"],
       category: "web",
       link: "#",
@@ -107,10 +108,7 @@ export default function Projects() {
               key={project.id}
               className="bg-white dark:bg-gray-900 rounded-xl shadow-lg dark:shadow-gray-900/50 overflow-hidden hover:shadow-2xl dark:hover:shadow-gray-900/70 transition-all duration-300 transform hover:scale-105"
             >
-              <div className="bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 h-48 flex items-center justify-center text-6xl">
-                {project.image}
-              </div>
-
+              <Image className="bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 h-48 flex items-center justify-center text-6xl" src={project.image != "" ? project.image : "📁"} alt={project.title} width={384} height={192} />              
               <div className="p-6">
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white flex-1">{project.title}</h3>
