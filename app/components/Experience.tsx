@@ -70,24 +70,6 @@ export default function Experience() {
             </div>
           ))}
         </div>
-
-        {/* Additional Info */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 rounded-xl p-8 text-center">
-            <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">5+</div>
-            <p className="text-gray-700 dark:text-gray-300 font-semibold">Years of Experience</p>
-          </div>
-
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl p-8 text-center">
-            <div className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">20+</div>
-            <p className="text-gray-700 dark:text-gray-300 font-semibold">Projects Completed</p>
-          </div>
-
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 rounded-xl p-8 text-center">
-            <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">15+</div>
-            <p className="text-gray-700 dark:text-gray-300 font-semibold">Happy Clients</p>
-          </div>
-        </div>
       </div>
     </section>
   );
