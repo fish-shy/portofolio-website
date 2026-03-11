@@ -6,7 +6,7 @@ export default function Experience() {
       period: "12/2024 - Present",
       description: "Developing and maintaining client/corporate websites and mobile applications.",
       achievements: [
-        "Develop and maintain client and corporate websites using Nuxt.js and WordPress",
+        "Develop and maintain clie  nt and corporate websites using Nuxt.js and WordPress",
         "Develop and maintain corporate mobile applications",
         "Collaborate with UI/UX teams to translate designs into interactive and responsive interfaces",
         "Perform QA testing, debugging, and performance optimization",
