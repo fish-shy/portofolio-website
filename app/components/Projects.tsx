@@ -1,9 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import MotionWrapper from "./MotionWrapper";
+import SharedTiltCard from "./TiltCard";
+
+// Project cards use the site-wide 3D tilt with a stronger angle + cursor glare.
+function TiltCard({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <SharedTiltCard glare shadow intensity={14} lift={12} perspective={1000} className={className}>
+      {children}
+    </SharedTiltCard>
+  );
+}
 
 export default function Projects() {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -76,7 +86,7 @@ export default function Projects() {
       description:
         "Capstone project (Coding Camp 2026 by DBS Foundation). Web app that scans food images with deep learning & computer vision to recognize dishes, estimate calories, and track daily intake. My role: Data Scientist (data wrangling, EDA, Streamlit dashboard).",
       image: "/assets/images/smartcal.png",
-      technologies: ["TensorFlow", "Computer Vision", "Express", "Tailwind CSS", "Streamlit", "react"],
+      technologies: ["TensorFlow", "Computer Vision", "Express", "Tailwind CSS", "Streamlit", "React"],
       category: "web",
       link: "https://fe-smartcal-656502826232.asia-southeast2.run.app/",
       isPrivate: false,
@@ -97,18 +107,14 @@ export default function Projects() {
       : projects.filter((project) => project.category === selectedCategory);
 
   return (
-    <section id="projects" className="py-24 relative overflow-hidden px-6">
-      {/* Background */}
-      <div className="absolute inset-0  dark:from-gray-900 dark:to-gray-800 -z-10" />
-
+    <section id="projects" className="py-24 relative px-6">
       <div className="max-w-6xl mx-auto">
         <MotionWrapper className="text-center mb-16">
-          <motion.span
-            className="inline-block text-green-600 dark:text-green-400 text-sm font-semibold uppercase tracking-wider mb-4 px-4 py-2 rounded-full bg-green-100 dark:bg-green-900/30"
-            whileHover={{ scale: 1.05 }}
-          >
-            Portfolio
-          </motion.span>
+          <span className="inline-flex items-center gap-4 font-mono text-xs md:text-sm tracking-[0.35em] uppercase text-green-600 dark:text-green-400 mb-5">
+            <span className="h-px w-10 bg-green-500/50" />
+            04 &middot; work
+            <span className="h-px w-10 bg-green-500/50" />
+          </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mt-2 mb-4">
             Featured <span className="gradient-text">Projects</span>
           </h2>
@@ -116,7 +122,6 @@ export default function Projects() {
             A selection of projects showcasing my skills across different
             technologies and industries
           </p>
-          <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-emerald-500 mx-auto rounded-full mt-6" />
         </MotionWrapper>
 
         {/* Category Filter */}
@@ -160,19 +165,16 @@ export default function Projects() {
               <motion.div
                 key={project.id}
                 layout
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
+                initial={{ opacity: 0, rotateX: -18, y: 40, transformPerspective: 900 }}
+                animate={{ opacity: 1, rotateX: 0, y: 0, transformPerspective: 900 }}
+                exit={{ opacity: 0, rotateX: 12, y: -20, transformPerspective: 900 }}
+                transition={{ duration: 0.5, delay: index * 0.08, ease: [0.25, 0.4, 0.25, 1] }}
                 onMouseEnter={() => setHoveredId(project.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 className="group relative"
+                style={{ perspective: 1200 }}
               >
-                <motion.div
-                  className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 h-full"
-                  whileHover={{ y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                >
+                <TiltCard className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 h-full">
                   {/* Image container */}
                   <div className="relative h-52 overflow-hidden">
                     <Image
@@ -213,7 +215,7 @@ export default function Projects() {
                         {project.technologies.slice(0, 3).map((tech, idx) => (
                           <motion.span
                             key={idx}
-                            className={`text-xs px-3 py-1 rounded-full font-medium bg-gradient-to-r ${project.color} bg-opacity-10 text-white border border-gray-200 dark:border-gray-600`}
+                            className="text-xs px-3 py-1 rounded-full font-medium bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200/70 dark:border-green-800/40"
                             whileHover={{ scale: 1.1 }}
                           >
                             {tech}
@@ -228,29 +230,38 @@ export default function Projects() {
                     </div>
 
                     {/* View link */}
-                    <motion.a
-                      href={project.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-2 font-semibold bg-gradient-to-r ${project.color} bg-clip-text text-transparent group/link`}
-                      whileHover={{ x: 5 }}
-                    >
-                      View Project
-                      <motion.svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        animate={{ x: hoveredId === project.id ? 5 : 0 }}
+                    {project.link && project.link !== "#" ? (
+                      <motion.a
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 font-semibold text-green-600 dark:text-green-400"
+                        whileHover={{ x: 5 }}
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </motion.svg>
-                    </motion.a>
+                        View Project
+                        <motion.svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          animate={{ x: hoveredId === project.id ? 5 : 0 }}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </motion.svg>
+                      </motion.a>
+                    ) : (
+                      <span className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 dark:text-gray-500">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                        </svg>
+                        {project.isPrivate ? "Private project" : "Client project"}
+                      </span>
+                    )}
                   </div>
 
                   {/* Bottom gradient line */}
                   <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${project.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`} />
-                </motion.div>
+                </TiltCard>
               </motion.div>
             ))}
           </AnimatePresence>
@@ -262,9 +273,8 @@ export default function Projects() {
             animate={{ opacity: 1 }}
             className="text-center py-16"
           >
-            <div className="text-6xl mb-4">🔍</div>
             <p className="text-gray-600 dark:text-gray-400 text-lg">
-              No projects found in this category.
+              No projects in this category yet.
             </p>
           </motion.div>
         )}

@@ -1,9 +1,18 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowBackToTop(window.scrollY > 600);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const quickLinks = [
     { label: "Home", href: "#home" },
@@ -13,10 +22,10 @@ export default function Footer() {
   ];
 
   const services = [
-    { label: "Web Development", href: "#" },
-    { label: "Mobile Apps", href: "#" },
-    { label: "UI/UX Design", href: "#" },
-    { label: "Consulting", href: "#" },
+    "Web Development",
+    "Mobile Apps",
+    "UI/UX Design",
+    "Backend & APIs",
   ];
 
   const socials = [
@@ -29,7 +38,7 @@ export default function Footer() {
       ),
     },
     {
-      href: "https://linkedin.com/in/hafiznazwanugraha",
+      href: "https://www.linkedin.com/in/hafiz-nazwa-nugraha/",
       icon: (
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
           <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
@@ -47,7 +56,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative bg-gray-900 text-white overflow-hidden">
+    <footer className="relative bg-gray-900 dark:bg-transparent text-white overflow-hidden dark:border-t dark:border-white/5">
       {/* Top gradient line */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-emerald-400 to-green-600" />
 
@@ -70,15 +79,16 @@ export default function Footer() {
               Hafiz Nazwa
             </h3>
             <p className="text-gray-400 leading-relaxed mb-6">
-              Full Stack Developer crafting innovative web & mobile solutions with passion and precision. Always learning, always growing.
+              Software engineer building web and mobile applications from
+              Banjarmasin, Indonesia.
             </p>
             <div className="flex gap-3">
               {socials.map((social, idx) => (
                 <motion.a
                   key={idx}
                   href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={social.href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel={social.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                   className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-br hover:from-green-500 hover:to-emerald-600 hover:text-white transition-all duration-300"
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   whileTap={{ scale: 0.9 }}
@@ -120,18 +130,12 @@ export default function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <h4 className="text-lg font-bold mb-6 text-white">Services</h4>
+            <h4 className="text-lg font-bold mb-6 text-white">What I Do</h4>
             <ul className="space-y-3">
               {services.map((service, idx) => (
-                <li key={idx}>
-                  <motion.a
-                    href={service.href}
-                    className="group text-gray-400 hover:text-green-400 transition-colors inline-flex items-center gap-2"
-                    whileHover={{ x: 5 }}
-                  >
-                    <span className="w-0 group-hover:w-2 h-0.5 bg-green-400 transition-all duration-300" />
-                    {service.label}
-                  </motion.a>
+                <li key={idx} className="text-gray-400 inline-flex items-center gap-2 w-full">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500/60" />
+                  {service}
                 </li>
               ))}
             </ul>
@@ -161,22 +165,32 @@ export default function Footer() {
             </motion.a>
           </motion.div>
         </div>
+
+        {/* Bottom bar */}
+        <div className="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+          © {currentYear} Hafiz Nazwa Nugraha. All rights reserved.
+        </div>
       </div>
 
       {/* Back to top button */}
-      <motion.a
-        href="#home"
-        className="fixed bottom-8 right-8 w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white flex items-center justify-center shadow-lg shadow-green-500/25 z-50"
-        whileHover={{ scale: 1.1, y: -5 }}
-        whileTap={{ scale: 0.9 }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1 }}
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-        </svg>
-      </motion.a>
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.a
+            href="#home"
+            aria-label="Back to top"
+            className="fixed bottom-8 right-8 w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white flex items-center justify-center shadow-lg shadow-green-500/25 z-50"
+            whileHover={{ scale: 1.1, y: -5 }}
+            whileTap={{ scale: 0.9 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+          </motion.a>
+        )}
+      </AnimatePresence>
     </footer>
   );
 }

@@ -2,12 +2,15 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
+import dynamic from "next/dynamic";
+
+const Hero3D = dynamic(() => import("./Hero3D"), { ssr: false });
 
 const roles = [
   "Software Engineer",
   "Mobile Developer",
   "Full-Stack Developer",
-  "Web3 Enthusiast",
+  "Backend Developer",
 ];
 
 export default function Hero() {
@@ -76,54 +79,27 @@ export default function Hero() {
       className="min-h-screen flex items-center justify-center relative overflow-hidden px-6 pt-32 md:pt-0"
     >
       {/* Background Design */}
-      <div className="absolute inset-0 pointer-events-none -z-10 flexItems-center justify-center">
-        {/* Subtle faint dotted grid */}
-        <div className="absolute inset-0 bg-[radial-gradient(#22c55e_1px,transparent_1px)] dark:bg-[radial-gradient(#22c55e_1px,transparent_1px)] opacity-[0.03] dark:opacity-[0.07] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)]" />
-
+      <div className="absolute inset-0 pointer-events-none -z-10 flex items-center justify-center">
         {/* Ambient green glowing center */}
         <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-green-500/20 dark:bg-green-500/10 blur-[100px] rounded-full"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-green-500/15 dark:bg-green-500/10 blur-[100px] rounded-full"
+          animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.75, 0.5] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* Secondary soft orb */}
-        <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] h-[30vw] max-w-[400px] max-h-[400px] bg-emerald-400/20 dark:bg-emerald-400/10 blur-[80px] rounded-full"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.8, 0.4, 0.8] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        />
-
-        {/* Little floating particles */}
-        {[
-          { size: 6, top: "20%", left: "15%", dur: 5, delay: 0.5 },
-          { size: 8, top: "60%", left: "80%", dur: 6, delay: 1.2 },
-          { size: 5, top: "80%", left: "30%", dur: 4, delay: 0.8 },
-          { size: 7, top: "30%", left: "70%", dur: 7, delay: 0.3 },
-          { size: 9, top: "45%", left: "55%", dur: 5, delay: 1.5 },
-        ].map((particle, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-green-500/30 dark:bg-green-400/20 shadow-[0_0_15px_rgba(34,197,94,0.5)]"
-            style={{
-              width: particle.size + "px",
-              height: particle.size + "px",
-              top: particle.top,
-              left: particle.left,
-            }}
-            animate={{
-              y: [0, -40, 0],
-              opacity: [0, 1, 0],
-              scale: [0, 1.5, 0],
-            }}
-            transition={{
-              duration: particle.dur,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: particle.delay,
-            }}
-          />
-        ))}
+        {/* Interactive 3D scene — faded at top & bottom so the starfield
+            dissolves into the shared backdrop instead of ending on a hard edge */}
+        <div
+          className="absolute inset-0 opacity-70 md:opacity-100"
+          style={{
+            maskImage:
+              "linear-gradient(to bottom, transparent 0%, black 18%, black 60%, transparent 96%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0%, black 18%, black 60%, transparent 96%)",
+          }}
+        >
+          <Hero3D />
+        </div>
       </div>
 
       <motion.div
@@ -198,16 +174,14 @@ export default function Hero() {
               whileTap={{ scale: 0.98 }}
             >
               <span className="relative z-10">Get In Touch</span>
-              <motion.svg
-                className="w-5 h-5 relative z-10"
+              <svg
+                className="w-5 h-5 relative z-10 transition-transform duration-300 group-hover:translate-x-1"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </motion.svg>
+              </svg>
               <span className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-green-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </motion.a>
 
@@ -218,16 +192,14 @@ export default function Hero() {
               whileTap={{ scale: 0.98 }}
             >
               <span className="relative z-10">View My Work</span>
-              <motion.svg
-                className="w-5 h-5 relative z-10"
+              <svg
+                className="w-5 h-5 relative z-10 transition-transform duration-300 group-hover:translate-y-1"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                animate={{ y: [0, 3, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </motion.svg>
+              </svg>
             </motion.a>
           </motion.div>
 
@@ -279,7 +251,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.5 }}
-            className="absolute bottom-0.4 left-1/2 transform -translate-x-1/2"
+            className="absolute bottom-0 left-1/2 transform -translate-x-1/2"
           >
             <motion.div
               className="flex flex-col items-center gap-2 text-gray-400 dark:text-gray-500"

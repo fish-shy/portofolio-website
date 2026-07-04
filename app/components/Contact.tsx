@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MotionWrapper, { StaggerWrapper, StaggerItem } from "./MotionWrapper";
+import TiltCard from "./TiltCard";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -27,10 +28,13 @@ export default function Contact() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    const subject = encodeURIComponent(formData.subject);
+    const body = encodeURIComponent(
+      `Hi Hafiz,\n\n${formData.message}\n\n— ${formData.name} (${formData.email})`
+    );
+    window.location.href = `mailto:HafizNugraha1311@gmail.com?subject=${subject}&body=${body}`;
     setSubmitted(true);
-    setFormData({ name: "", email: "", subject: "", message: "" });
-    setTimeout(() => setSubmitted(false), 3000);
+    setTimeout(() => setSubmitted(false), 6000);
   };
 
   const contactInfo = [
@@ -65,16 +69,13 @@ export default function Contact() {
       ),
       title: "Location",
       value: "Banjarmasin, Indonesia",
-      href: "#",
+      href: "https://www.google.com/maps/place/Banjarmasin",
       color: "from-green-600 to-emerald-600",
     },
   ];
 
   return (
-    <section id="contact" className="py-24 relative overflow-hidden px-6">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50 dark:hidden -z-10" />
-
+    <section id="contact" className="py-24 relative px-6">
       {/* Decorative elements */}
       <motion.div
         className="absolute top-20 left-10 w-72 h-72 bg-green-400/20 dark:bg-green-500/20 rounded-full blur-[100px]"
@@ -89,12 +90,11 @@ export default function Contact() {
 
       <div className="max-w-6xl mx-auto relative z-10">
         <MotionWrapper className="text-center mb-16">
-          <motion.span
-            className="inline-block text-green-600 dark:text-green-400 text-sm font-semibold uppercase tracking-wider mb-4 px-4 py-2 rounded-full bg-green-100 dark:bg-green-900/30"
-            whileHover={{ scale: 1.05 }}
-          >
-            Get In Touch
-          </motion.span>
+          <span className="inline-flex items-center gap-4 font-mono text-xs md:text-sm tracking-[0.35em] uppercase text-green-600 dark:text-green-400 mb-5">
+            <span className="h-px w-10 bg-green-500/50" />
+            05 &middot; contact
+            <span className="h-px w-10 bg-green-500/50" />
+          </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mt-2 mb-4">
             Let&apos;s Work <span className="gradient-text">Together</span>
           </h2>
@@ -102,7 +102,6 @@ export default function Contact() {
             Have a project in mind? I&apos;d love to hear about it. Get in touch
             and let&apos;s create something amazing.
           </p>
-          <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-emerald-500 mx-auto rounded-full mt-6" />
         </MotionWrapper>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -110,35 +109,46 @@ export default function Contact() {
           <StaggerWrapper className="lg:col-span-1 space-y-6" staggerDelay={0.1}>
             {contactInfo.map((info, index) => (
               <StaggerItem key={index}>
-                <motion.a
-                  href={info.href}
-                  className="group flex items-start gap-4 p-6 rounded-2xl bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:border-green-500/50 transition-all duration-300"
-                  whileHover={{ x: 10, scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                <TiltCard
+                  glare
+                  shadow
+                  intensity={15}
+                  lift={8}
+                  className="group relative overflow-hidden rounded-2xl"
                 >
-                  <motion.div
-                    className={`flex-shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br ${info.color} flex items-center justify-center text-white shadow-lg`}
-                    whileHover={{ rotate: 10, scale: 1.1 }}
+                  <a
+                    href={info.href}
+                    target={info.href.startsWith("http") ? "_blank" : undefined}
+                    rel={info.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                    className="flex items-start gap-4 p-6 rounded-2xl bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 group-hover:border-green-500/50 transition-all duration-300"
                   >
-                    {info.icon}
-                  </motion.div>
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                      {info.title}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
-                      {info.value}
-                    </p>
-                  </div>
-                </motion.a>
+                    <motion.div
+                      className={`flex-shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br ${info.color} flex items-center justify-center text-white shadow-lg`}
+                      whileHover={{ rotate: 10, scale: 1.1 }}
+                    >
+                      {info.icon}
+                    </motion.div>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                        {info.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                        {info.value}
+                      </p>
+                    </div>
+                  </a>
+                </TiltCard>
               </StaggerItem>
             ))}
 
             {/* Social Links */}
             <StaggerItem>
-              <motion.div
-                className="p-6 rounded-2xl bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700"
-                whileHover={{ scale: 1.02 }}
+              <TiltCard
+                glare
+                shadow
+                intensity={13}
+                lift={6}
+                className="relative overflow-hidden p-6 rounded-2xl bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700"
               >
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                   Follow Me
@@ -175,12 +185,18 @@ export default function Contact() {
                     </motion.a>
                   ))}
                 </div>
-              </motion.div>
+              </TiltCard>
             </StaggerItem>
           </StaggerWrapper>
 
           {/* Contact Form */}
           <MotionWrapper direction="right" delay={0.3} className="lg:col-span-2">
+            <TiltCard
+              intensity={6}
+              lift={0}
+              perspective={1600}
+              className="relative overflow-hidden rounded-3xl h-full"
+            >
             <motion.form
               onSubmit={handleSubmit}
               className="relative bg-white dark:bg-gray-800/80 rounded-3xl p-8 md:p-10 border border-gray-200 dark:border-gray-700 shadow-xl"
@@ -205,7 +221,8 @@ export default function Contact() {
                       </svg>
                     </div>
                     <p className="text-green-700 dark:text-green-400 font-semibold">
-                      Thank you! I will get back to you soon.
+                      Your email app should open with the message ready to send.
+                      If it doesn&apos;t, email me directly at HafizNugraha1311@gmail.com.
                     </p>
                   </motion.div>
                 )}
@@ -309,16 +326,14 @@ export default function Contact() {
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   Send Message
-                  <motion.svg
-                    className="w-5 h-5"
+                  <svg
+                    className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </motion.svg>
+                  </svg>
                 </span>
                 <motion.span
                   className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-green-600"
@@ -328,6 +343,7 @@ export default function Contact() {
                 />
               </motion.button>
             </motion.form>
+            </TiltCard>
           </MotionWrapper>
         </div>
       </div>
