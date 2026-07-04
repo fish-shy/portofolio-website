@@ -70,6 +70,18 @@ export default function Projects() {
       isPrivate: false,
       color: "from-emerald-500 to-teal-400",
     },
+    {
+      id: 6,
+      title: "SmartCal",
+      description:
+        "Capstone project (Coding Camp 2026 by DBS Foundation). Web app that scans food images with deep learning & computer vision to recognize dishes, estimate calories, and track daily intake. My role: Data Scientist (data wrangling, EDA, Streamlit dashboard).",
+      image: "/assets/images/smartcal.png",
+      technologies: ["TensorFlow", "Computer Vision", "Express", "Tailwind CSS", "Streamlit", "react"],
+      category: "web",
+      link: "https://fe-smartcal-656502826232.asia-southeast2.run.app/",
+      isPrivate: false,
+      color: "from-emerald-500 to-green-600",
+    },
   ];
 
   const categories = [
