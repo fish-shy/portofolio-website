@@ -38,6 +38,9 @@ const MarqueeRow = ({ items, reverse = false, duration = 40 }: { items: string[]
         {content.map((item, idx) => (
           <div
             key={idx}
+            // Second copy exists only to make the scroll seamless — hide it from
+            // assistive tech and crawlers so each skill is announced once.
+            aria-hidden={idx >= items.length || undefined}
             className="px-6 md:px-8 py-3 rounded-full border border-gray-200 dark:border-gray-700/50 text-gray-600 dark:text-gray-300 bg-white/80 dark:bg-gray-800/40 backdrop-blur-md text-sm md:text-base font-medium whitespace-nowrap hover:border-green-500/50 dark:hover:border-green-400/50 dark:hover:bg-gray-800/80 hover:-translate-y-1 hover:text-green-600 dark:hover:text-green-400 transition-all duration-300 cursor-default shadow-sm"
           >
             {item}
@@ -50,7 +53,7 @@ const MarqueeRow = ({ items, reverse = false, duration = 40 }: { items: string[]
 
 export default function Skills() {
   return (
-    <section id="skills" className="py-32 relative px-6">
+    <section id="skills" aria-labelledby="skills-heading" className="py-32 relative px-6">
       {/* Ambient glow, unclipped so it bleeds into neighboring sections */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] max-w-full h-[400px] bg-green-500/10 dark:bg-green-500/12 blur-[120px] rounded-full pointer-events-none -z-10" />
 
@@ -61,7 +64,7 @@ export default function Skills() {
             02 &middot; stack
             <span className="h-px w-10 bg-green-500/50" />
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white">
+          <h2 id="skills-heading" className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white">
             Technologies & Tools
           </h2>
         </MotionWrapper>

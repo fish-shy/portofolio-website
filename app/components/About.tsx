@@ -7,7 +7,7 @@ import TiltCard from "./TiltCard";
 
 export default function About() {
   return (
-    <section id="about" className="py-24 relative px-6">
+    <section id="about" aria-labelledby="about-heading" className="py-24 relative px-6">
       <div className="max-w-6xl mx-auto">
         <MotionWrapper className="text-center mb-16">
           <span className="inline-flex items-center gap-4 font-mono text-xs md:text-sm tracking-[0.35em] uppercase text-green-600 dark:text-green-400 mb-5">
@@ -15,7 +15,7 @@ export default function About() {
             01 &middot; about
             <span className="h-px w-10 bg-green-500/50" />
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mt-2">
+          <h2 id="about-heading" className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mt-2">
             Who I <span className="text-green-500">Am</span>
           </h2>
         </MotionWrapper>
@@ -53,8 +53,9 @@ export default function About() {
                 >
                   <Image
                     src="/assets/images/profile.png"
-                    alt="Hafiz Nazwa Nugraha"
+                    alt="Portrait of Hafiz Nazwa Nugraha, software engineer based in Banjarmasin, Indonesia"
                     fill
+                    sizes="(max-width: 768px) 15rem, 18rem"
                     className="object-cover"
                     priority
                   />

@@ -76,6 +76,7 @@ export default function Hero() {
     <section
       ref={containerRef}
       id="home"
+      aria-labelledby="hero-heading"
       className="min-h-screen flex items-center justify-center relative overflow-hidden px-6 pt-32 md:pt-0"
     >
       {/* Background Design */}
@@ -124,10 +125,16 @@ export default function Hero() {
 
           {/* Main heading */}
           <motion.div variants={itemVariants} className="mb-6">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-4">
+            <h1 id="hero-heading" className="text-5xl md:text-7xl lg:text-8xl font-bold mb-4">
               <span className="text-gray-900 dark:text-white">Hi, I&apos;m </span>
               <span className="relative">
                 <span className="text-green-500">Hafiz</span>
+              </span>
+              {/* Full name + role stay in the h1 for search engines and screen
+                  readers without changing what's drawn on screen. */}
+              <span className="sr-only">
+                {" "}
+                Nazwa Nugraha — Software Engineer &amp; Mobile Developer
               </span>
             </h1>
           </motion.div>
@@ -135,10 +142,14 @@ export default function Hero() {
           {/* Typing animation */}
           <motion.div variants={itemVariants} className="mb-8">
             <p className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-700 dark:text-gray-300">
-              <span className="text-green-600 dark:text-green-400">
+              {/* The typed text is empty on the server, so the roles are also
+                  rendered statically for crawlers and assistive tech. */}
+              <span className="sr-only">{roles.join(", ")}</span>
+              <span aria-hidden="true" className="text-green-600 dark:text-green-400">
                 {displayText}
               </span>
               <motion.span
+                aria-hidden="true"
                 className="inline-block w-1 h-8 md:h-10 bg-green-500 ml-1"
                 animate={{ opacity: [1, 0] }}
                 transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
@@ -206,15 +217,16 @@ export default function Hero() {
           {/* Social Links */}
           <motion.div variants={itemVariants} className="flex justify-center gap-5 mb-20">
             {[
-              { href: "https://github.com/fish-shy", icon: "github" },
-              { href: "https://linkedin.com/in/hafiz-nazwa-nugraha", icon: "linkedin" },
-              { href: "mailto:HafizNugraha1311@gmail.com", icon: "email" },
+              { href: "https://github.com/fish-shy", icon: "github", label: "GitHub profile" },
+              { href: "https://www.linkedin.com/in/hafiz-nazwa-nugraha/", icon: "linkedin", label: "LinkedIn profile" },
+              { href: "mailto:HafizNugraha1311@gmail.com", icon: "email", label: "Email Hafiz" },
             ].map((social, index) => (
               <motion.a
                 key={social.icon}
                 href={social.href}
+                aria-label={social.label}
                 target={social.icon !== "email" ? "_blank" : undefined}
-                rel={social.icon !== "email" ? "noopener noreferrer" : undefined}
+                rel={social.icon !== "email" ? "me noopener noreferrer" : undefined}
                 className="group relative w-14 h-14 flex items-center justify-center rounded-full bg-white/80 dark:bg-gray-800/40 backdrop-blur-md text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700/50 hover:text-green-600 dark:hover:text-green-400 hover:border-green-500/50 dark:hover:border-green-500/50 hover:bg-green-50/50 dark:hover:bg-green-500/10 transition-all duration-300 shadow-sm"
                 whileHover={{
                   scale: 1.15,

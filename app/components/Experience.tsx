@@ -32,7 +32,7 @@ export default function Experience() {
   ];
 
   return (
-    <section id="experience" className="py-24 relative px-6">
+    <section id="experience" aria-labelledby="experience-heading" className="py-24 relative px-6">
       <div className="max-w-5xl mx-auto">
         <MotionWrapper className="text-center mb-16">
           <span className="inline-flex items-center gap-4 font-mono text-xs md:text-sm tracking-[0.35em] uppercase text-green-600 dark:text-green-400 mb-5">
@@ -40,7 +40,7 @@ export default function Experience() {
             03 &middot; experience
             <span className="h-px w-10 bg-green-500/50" />
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mt-2 mb-4">
+          <h2 id="experience-heading" className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mt-2 mb-4">
             Professional <span className="gradient-text">Experience</span>
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">

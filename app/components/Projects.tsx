@@ -107,7 +107,7 @@ export default function Projects() {
       : projects.filter((project) => project.category === selectedCategory);
 
   return (
-    <section id="projects" className="py-24 relative px-6">
+    <section id="projects" aria-labelledby="projects-heading" className="py-24 relative px-6">
       <div className="max-w-6xl mx-auto">
         <MotionWrapper className="text-center mb-16">
           <span className="inline-flex items-center gap-4 font-mono text-xs md:text-sm tracking-[0.35em] uppercase text-green-600 dark:text-green-400 mb-5">
@@ -115,7 +115,7 @@ export default function Projects() {
             04 &middot; work
             <span className="h-px w-10 bg-green-500/50" />
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mt-2 mb-4">
+          <h2 id="projects-heading" className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mt-2 mb-4">
             Featured <span className="gradient-text">Projects</span>
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -180,7 +180,7 @@ export default function Projects() {
                     <Image
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                       src={project.image || "/placeholder.png"}
-                      alt={project.title}
+                      alt={`${project.title} — ${project.technologies.slice(0, 3).join(", ")} project screenshot`}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
