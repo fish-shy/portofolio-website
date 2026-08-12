@@ -98,10 +98,10 @@ export default function Header() {
           <Link
             href="/"
             aria-label="Hafiz Nazwa Nugraha — home"
-            className="relative text-2xl font-bold"
+            className="relative font-display text-2xl font-bold tracking-tight"
           >
             <span className="bg-gradient-to-r from-green-600 via-emerald-500 to-teal-500 bg-clip-text text-transparent">
-              HN
+              Hafiz
             </span>
             <motion.span
               className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-green-600 to-teal-500 rounded-full"
