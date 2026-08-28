@@ -86,7 +86,7 @@ export default function OpengraphImage() {
             marginTop: 32,
           }}
         >
-          Next.js · Flutter · Node.js — Banjarmasin, Indonesia
+          Next.js · Node.js — Banjarmasin, Indonesia
         </div>
 
         <div

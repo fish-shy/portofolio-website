@@ -1,19 +1,25 @@
+/** The live domain. Canonicals, OG tags and the sitemap must all agree on it. */
+const PRODUCTION_URL = "https://hafiznugraha.my.id";
+
 /**
  * Single source of truth for every SEO-facing value on the site.
  *
  * The canonical origin resolves in this order:
- *   1. NEXT_PUBLIC_SITE_URL          — set this once you have a custom domain
- *   2. VERCEL_PROJECT_PRODUCTION_URL — injected automatically on Vercel
- *   3. localhost                     — local development fallback
+ *   1. NEXT_PUBLIC_SITE_URL — explicit override (preview branches, a domain move)
+ *   2. PRODUCTION_URL       — anywhere that isn't local dev
+ *   3. localhost            — local development only
+ *
+ * VERCEL_PROJECT_PRODUCTION_URL is deliberately NOT used: it resolves to the
+ * *.vercel.app host, which would publish canonical tags pointing away from the
+ * real domain and split ranking signals across two origins.
  */
 function resolveSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   if (explicit) return explicit.replace(/\/+$/, "");
 
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-  if (vercel) return `https://${vercel}`;
+  if (process.env.NODE_ENV === "development") return "http://localhost:3000";
 
-  return "http://localhost:3000";
+  return PRODUCTION_URL;
 }
 
 export const siteUrl = resolveSiteUrl();

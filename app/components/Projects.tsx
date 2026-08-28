@@ -92,6 +92,18 @@ export default function Projects() {
       isPrivate: false,
       color: "from-emerald-500 to-green-600",
     },
+    {
+      id: 7,
+      title: "CreativeChain",
+      description:
+        "Digital art marketplace on Solana with AI-powered authenticity verification. Indonesian artists can mint, buy, and sell their work on-chain, with artwork stored permanently on Arweave.",
+      image: "/assets/images/creativechain.png",
+      technologies: ["Solana", "AI Verification", "Arweave", "NFT", "Web3"],
+      category: "web",
+      link: "https://creativechain.my.id",
+      isPrivate: false,
+      color: "from-violet-500 to-purple-600",
+    },
   ];
 
   const categories = [
