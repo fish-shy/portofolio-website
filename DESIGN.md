@@ -31,9 +31,9 @@ Every text pairing was checked with `.claude/skills/antislop-human/contrast-chec
 ## Decisions
 
 - Owner asked for more 3D and a more professional finish, so every 3D piece carries real content: project screenshots, the Learnify app art, the actual skill list. Nothing in 3D is filler.
-- Hero: a three.js laptop (screen switches between SmartCal, Village Budget and CLINICALgo via real buttons) and a phone showing the Learnify e-learning app. The lid opens on load and folds as the hero scrolls away. Mouse users can drag to turn the devices; touch users scroll normally. The canvas stops rendering off screen, shows a static screenshot while loading or without WebGL, and holds still for reduced motion.
+- Hero: a three.js laptop (screen switches between CreativeChain, Village Budget, CLINICALgo and SmartCal via real buttons) and a phone showing the Learnify e-learning app. The lid opens on load and folds as the hero scrolls away. Mouse users can drag to turn the devices; touch users scroll normally. The canvas stops rendering off screen, shows a static screenshot while loading or without WebGL, and holds still for reduced motion.
 - Stack: CSS 3D sphere, so labels stay sharp text. The grouped cards beside it carry the same list for screen readers and scanning.
-- Work: three featured projects in browser frames whose address bar shows the real host, or says there is none. Smaller projects are cards in a two-column grid.
+- Work: four featured projects (CreativeChain first, SmartCal last) in browser frames whose address bar shows the real host, or says there is none. Smaller projects are cards in a two-column grid.
 - Surfaces: 16px radius cards on a surface colour with a hairline border. Shadow only on things that are lifted in 3D (screens, portrait, the floating header).
 - Glass: only the floating header, because content scrolls under it.
 - Motion: name and intro rise in once on load; sections fade up once; cards tilt toward a mouse cursor. Reduced motion turns all of it off.

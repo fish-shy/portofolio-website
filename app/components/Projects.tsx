@@ -13,20 +13,23 @@ type Project = {
   /** Public URL, or null when the work cannot be linked. */
   link: string | null;
   isPrivate: boolean;
+  /** Screenshot aspect ratio when it is not the default 16 / 10. */
+  aspect?: string;
 };
 
-// Projects with a full-size screenshot get the large treatment; the rest have
-// only a logo or small image, so they sit in the compact list below.
+// Projects with a real screenshot get the large treatment; the rest have only
+// a logo, so they sit in the card grid below.
 const featured: Project[] = [
   {
-    title: "SmartCal",
-    context: "Capstone, Coding Camp 2026 by DBS Foundation",
+    title: "CreativeChain",
+    context: "Digital art marketplace on Solana",
     description:
-      "A web app that scans a photo of food, recognizes the dish with a computer-vision model, estimates its calories, and tracks daily intake. My role was data scientist: data wrangling, EDA, and the Streamlit dashboard.",
-    image: "/assets/images/smartcal.png",
-    technologies: ["TensorFlow", "Computer vision", "Streamlit", "React", "Express", "Tailwind CSS"],
-    link: "https://fe-smartcal-656502826232.asia-southeast2.run.app/",
+      "A marketplace where Indonesian artists mint, buy, and sell their work on-chain. Authenticity is checked with AI, and artwork is stored permanently on Arweave.",
+    image: "/assets/images/creativechain.png",
+    technologies: ["Solana", "Arweave", "Web3", "NFT"],
+    link: "https://creativechain.my.id",
     isPrivate: false,
+    aspect: "480 / 252",
   },
   {
     title: "Village Budget Monitoring System",
@@ -47,18 +50,19 @@ const featured: Project[] = [
     link: null,
     isPrivate: true,
   },
+  {
+    title: "SmartCal",
+    context: "Capstone, Coding Camp 2026 by DBS Foundation",
+    description:
+      "A web app that scans a photo of food, recognizes the dish with a computer-vision model, estimates its calories, and tracks daily intake. My role was data scientist: data wrangling, EDA, and the Streamlit dashboard.",
+    image: "/assets/images/smartcal.png",
+    technologies: ["TensorFlow", "Computer vision", "Streamlit", "React", "Express", "Tailwind CSS"],
+    link: "https://fe-smartcal-656502826232.asia-southeast2.run.app/",
+    isPrivate: false,
+  },
 ];
 
 const more: Project[] = [
-  {
-    title: "CreativeChain",
-    description:
-      "A digital art marketplace on Solana where Indonesian artists mint, buy, and sell their work on-chain. Authenticity is checked with AI, and artwork is stored permanently on Arweave.",
-    image: "/assets/images/creativechain.png",
-    technologies: ["Solana", "Arweave", "Web3"],
-    link: "https://creativechain.my.id",
-    isPrivate: false,
-  },
   {
     title: "E-learning mobile app",
     description:
@@ -148,6 +152,7 @@ export default function Projects() {
                   alt={`Screenshot of ${project.title}`}
                   address={addressFor(project)}
                   side={index % 2 === 1 ? "right" : "left"}
+                  aspect={project.aspect}
                 />
               </div>
 
@@ -182,10 +187,10 @@ export default function Projects() {
               More projects
             </h3>
           </MotionWrapper>
-          <ul className="grid gap-5 md:grid-cols-2">
+          <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {more.map((project, i) => (
               <li key={project.title}>
-                <MotionWrapper delay={(i % 2) * 0.08} className="h-full">
+                <MotionWrapper delay={(i % 3) * 0.08} className="h-full">
                   <TiltCard className="h-full">
                     <article className="h-full flex flex-col rounded-2xl border border-line bg-surface overflow-hidden">
                       <div className="relative h-40 bg-white border-b border-line">

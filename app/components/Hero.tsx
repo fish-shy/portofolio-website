@@ -6,10 +6,12 @@ import { Component, useEffect, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { siteConfig } from "../lib/site";
 
+// Same order as WEB_SCREENS in Hero3D, which loads one texture per entry.
 const SCREENS = [
-  { title: "SmartCal", src: "/assets/images/smartcal.png" },
+  { title: "CreativeChain", src: "/assets/images/creativechain.png" },
   { title: "Village Budget", src: "/assets/images/sipandai.png" },
   { title: "CLINICALgo", src: "/assets/images/clinicalgo.png" },
+  { title: "SmartCal", src: "/assets/images/smartcal.png" },
 ];
 
 // Shown while three.js loads, and kept if the browser has no WebGL.
@@ -22,7 +24,7 @@ function StaticScreen({ active = 0 }: { active?: number }) {
           alt=""
           fill
           sizes="(max-width: 1024px) 80vw, 40rem"
-          className="object-cover object-top"
+          className={active === 0 ? "object-contain bg-[#090a12]" : "object-cover object-top"}
         />
       </div>
     </div>
@@ -46,7 +48,7 @@ export default function Hero() {
   const [active, setActive] = useState(0);
   const [pinned, setPinned] = useState(false);
 
-  // Cycle the laptop screen through the three web projects until the visitor picks one.
+  // Cycle the laptop screen through the web projects until the visitor picks one.
   useEffect(() => {
     if (pinned || reduce) return;
     const id = setInterval(() => setActive((i) => (i + 1) % SCREENS.length), 5000);
@@ -134,7 +136,7 @@ export default function Hero() {
             <p className="text-sm text-muted text-center" id="screen-picker-label">
               On the screen:
             </p>
-            <div role="group" aria-labelledby="screen-picker-label" className="flex justify-center gap-1 rounded-xl border border-line bg-surface/70 p-1">
+            <div role="group" aria-labelledby="screen-picker-label" className="flex flex-wrap justify-center gap-1 rounded-xl border border-line bg-surface/70 p-1">
               {SCREENS.map((s, i) => (
                 <button
                   key={s.title}

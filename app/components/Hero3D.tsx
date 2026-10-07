@@ -14,9 +14,11 @@ import * as THREE from "three";
 import { useTheme } from "./ThemeProvider";
 
 export const WEB_SCREENS = [
-  { title: "SmartCal", src: "/assets/images/smartcal.png", w: 2550, h: 1432 },
+  // Wider than the screen, so it is shown whole on a dark backing instead of cropped.
+  { title: "CreativeChain", src: "/assets/images/creativechain.png", w: 480, h: 252, contain: true },
   { title: "Village Budget Monitoring", src: "/assets/images/sipandai.png", w: 2559, h: 1310 },
   { title: "CLINICALgo", src: "/assets/images/clinicalgo.png", w: 2540, h: 1306 },
+  { title: "SmartCal", src: "/assets/images/smartcal.png", w: 2550, h: 1432 },
 ];
 const PHONE_SCREEN = { src: "/assets/images/learnfy.png", w: 277, h: 238 };
 
@@ -63,7 +65,16 @@ function Laptop({ active, palette, still }: { active: number; palette: Palette; 
   );
 
   useMemo(() => {
-    textures.forEach((t, i) => coverTop(t, WEB_SCREENS[i].w / WEB_SCREENS[i].h, SCREEN_W / SCREEN_H));
+    textures.forEach((t, i) => {
+      const s = WEB_SCREENS[i];
+      if ("contain" in s) {
+        t.colorSpace = THREE.SRGBColorSpace;
+        t.anisotropy = 8;
+        t.needsUpdate = true;
+      } else {
+        coverTop(t, s.w / s.h, SCREEN_W / SCREEN_H);
+      }
+    });
   }, [textures]);
 
   // The lid starts shut and opens once on load; scrolling past the hero closes it again.
@@ -105,12 +116,25 @@ function Laptop({ active, palette, still }: { active: number; palette: Palette; 
           <planeGeometry args={[3.2, 2.05]} />
           <meshStandardMaterial color={palette.bezel} roughness={0.4} />
         </mesh>
-        {WEB_SCREENS.map((s, i) => (
-          <mesh key={s.src} position={[0, 1.1, 0.004]} visible={i === active}>
-            <planeGeometry args={[SCREEN_W, SCREEN_H]} />
-            <meshBasicMaterial map={textures[i]} toneMapped={false} />
-          </mesh>
-        ))}
+        {WEB_SCREENS.map((s, i) =>
+          "contain" in s ? (
+            <group key={s.src} visible={i === active}>
+              <mesh position={[0, 1.1, 0.003]}>
+                <planeGeometry args={[SCREEN_W, SCREEN_H]} />
+                <meshBasicMaterial color="#090a12" toneMapped={false} />
+              </mesh>
+              <mesh position={[0, 1.1, 0.004]}>
+                <planeGeometry args={[SCREEN_W, SCREEN_W / (s.w / s.h)]} />
+                <meshBasicMaterial map={textures[i]} toneMapped={false} />
+              </mesh>
+            </group>
+          ) : (
+            <mesh key={s.src} position={[0, 1.1, 0.004]} visible={i === active}>
+              <planeGeometry args={[SCREEN_W, SCREEN_H]} />
+              <meshBasicMaterial map={textures[i]} toneMapped={false} />
+            </mesh>
+          )
+        )}
       </group>
     </group>
   );

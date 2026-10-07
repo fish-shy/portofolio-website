@@ -12,13 +12,15 @@ interface ScrollScreenProps {
   address: string;
   /** Which way the screen leans before it settles; alternates down the page. */
   side: "left" | "right";
+  /** CSS aspect-ratio of the screenshot area; match the image to avoid cropping. */
+  aspect?: string;
 }
 
 /**
  * A screenshot in a browser frame that starts tipped back in 3D and stands up
  * flat as it scrolls into the middle of the viewport.
  */
-export default function ScrollScreen({ src, alt, address, side }: ScrollScreenProps) {
+export default function ScrollScreen({ src, alt, address, side, aspect = "16 / 10" }: ScrollScreenProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
@@ -37,7 +39,7 @@ export default function ScrollScreen({ src, alt, address, side }: ScrollScreenPr
                 {address}
               </span>
             </div>
-            <div className="relative aspect-[16/10]">
+            <div className="relative" style={{ aspectRatio: aspect }}>
               <Image
                 src={src}
                 alt={alt}
