@@ -1,15 +1,29 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
 import { useTheme } from "./ThemeProvider";
 
-const PARTICLE_COUNT = 1200;
+// Real screenshots from the Work section, served through the Next image
+// optimizer so the GPU gets a 1200px texture instead of the 2.5k originals.
+const SCREENS = [
+  { src: "/assets/images/smartcal.png", aspect: 2550 / 1432 },
+  { src: "/assets/images/sipandai.png", aspect: 2559 / 1310 },
+  { src: "/assets/images/clinicalgo.png", aspect: 2540 / 1306 },
+];
+const textureUrl = (src: string) => `/_next/image?url=${encodeURIComponent(src)}&w=1200&q=80`;
+
+// Resting pose of each sheet: [x, y, z] and Y rotation, front sheet first.
+const LAYOUT = [
+  { pos: [0.55, -0.45, 0.9], rotY: -0.32 },
+  { pos: [-0.2, 0.4, -0.2], rotY: -0.22 },
+  { pos: [1.05, 1.0, -1.3], rotY: -0.12 },
+] as const;
+const WIDTH = 3.1;
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
-
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReduced(mq.matches);
@@ -17,13 +31,12 @@ function usePrefersReducedMotion() {
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
   }, []);
-
   return reduced;
 }
 
-/* Rotates the whole scene gently toward the cursor. Listens on window
-   because the canvas itself is pointer-events: none. */
-function Rig({ children }: { children: ReactNode }) {
+/* Tilts the stack toward the cursor and fans the sheets apart as the hero
+   scrolls away. Listens on window because the canvas ignores pointer events. */
+function Rig({ children, still }: { children: ReactNode; still: boolean }) {
   const group = useRef<THREE.Group>(null);
   const pointer = useRef({ x: 0, y: 0 });
 
@@ -37,152 +50,110 @@ function Rig({ children }: { children: ReactNode }) {
   }, []);
 
   useFrame((_, delta) => {
-    if (!group.current) return;
-    group.current.rotation.y = THREE.MathUtils.damp(
-      group.current.rotation.y,
-      pointer.current.x * 0.25,
-      2.5,
-      delta
-    );
-    group.current.rotation.x = THREE.MathUtils.damp(
-      group.current.rotation.x,
-      pointer.current.y * 0.15,
-      2.5,
-      delta
-    );
+    if (!group.current || still) return;
+    const g = group.current;
+    g.rotation.y = THREE.MathUtils.damp(g.rotation.y, pointer.current.x * 0.35, 3, delta);
+    g.rotation.x = THREE.MathUtils.damp(g.rotation.x, pointer.current.y * 0.2, 3, delta);
   });
 
   return <group ref={group}>{children}</group>;
 }
 
-function Core({ color }: { color: string }) {
-  const outer = useRef<THREE.Mesh>(null);
-  const inner = useRef<THREE.Mesh>(null);
+function Sheet({
+  texture,
+  aspect,
+  index,
+  frameColor,
+  still,
+}: {
+  texture: THREE.Texture;
+  aspect: number;
+  index: number;
+  frameColor: string;
+  still: boolean;
+}) {
+  const ref = useRef<THREE.Group>(null);
+  const { pos, rotY } = LAYOUT[index];
+  const height = WIDTH / aspect;
 
   useFrame((state, delta) => {
-    const bob = Math.sin(state.clock.elapsedTime * 0.5) * 0.15;
-    if (outer.current) {
-      outer.current.rotation.x += delta * 0.06;
-      outer.current.rotation.y += delta * 0.09;
-      outer.current.position.y = bob;
-    }
-    if (inner.current) {
-      inner.current.rotation.x -= delta * 0.12;
-      inner.current.rotation.y -= delta * 0.08;
-      inner.current.position.y = bob;
-    }
+    if (!ref.current || still) return;
+    const t = state.clock.elapsedTime;
+    const spread = Math.min(window.scrollY / window.innerHeight, 1);
+    // Each layer drifts at its own phase so the depth reads on touch screens too.
+    const float = Math.sin(t * 0.6 + index * 1.3) * 0.06;
+    ref.current.position.y = THREE.MathUtils.damp(ref.current.position.y, pos[1] + float + spread * index * 0.5, 4, delta);
+    ref.current.position.z = THREE.MathUtils.damp(ref.current.position.z, pos[2] - spread * index * 1.2, 4, delta);
   });
 
   return (
-    <group>
-      <mesh ref={outer}>
-        <icosahedronGeometry args={[2.1, 1]} />
-        <meshBasicMaterial wireframe color={color} transparent opacity={0.28} />
+    <group ref={ref} position={[pos[0], pos[1], pos[2]]} rotation={[0, rotY, 0]}>
+      <mesh position={[0, 0, -0.01]}>
+        <planeGeometry args={[WIDTH + 0.08, height + 0.08]} />
+        <meshBasicMaterial color={frameColor} toneMapped={false} />
       </mesh>
-      <mesh ref={inner}>
-        <icosahedronGeometry args={[1.1, 0]} />
-        <meshBasicMaterial wireframe color={color} transparent opacity={0.45} />
+      <mesh>
+        <planeGeometry args={[WIDTH, height]} />
+        <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
     </group>
   );
 }
 
-function OrbitRing({
-  color,
-  tilt,
-  speed,
-  offset = 0,
-  radius = 3.1,
-}: {
-  color: string;
-  tilt: number;
-  speed: number;
-  offset?: number;
-  radius?: number;
-}) {
-  const dot = useRef<THREE.Mesh>(null);
+function Stack({ frameColor, still }: { frameColor: string; still: boolean }) {
+  const urls = useMemo(() => SCREENS.map((s) => textureUrl(s.src)), []);
+  const textures = useLoader(THREE.TextureLoader, urls);
 
-  useFrame((state) => {
-    const t = state.clock.elapsedTime * speed + offset;
-    if (dot.current) {
-      dot.current.position.set(Math.cos(t) * radius, 0, Math.sin(t) * radius);
-    }
-  });
+  useEffect(() => {
+    textures.forEach((t) => {
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = 4;
+      t.needsUpdate = true;
+    });
+  }, [textures]);
 
+  // Draw back to front so the front sheet is never hidden by a later one.
   return (
-    <group rotation={[tilt, 0, 0]}>
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[radius, 0.008, 8, 128]} />
-        <meshBasicMaterial color={color} transparent opacity={0.3} />
-      </mesh>
-      <mesh ref={dot}>
-        <sphereGeometry args={[0.055, 16, 16]} />
-        <meshBasicMaterial color={color} />
-      </mesh>
-    </group>
-  );
-}
-
-function Particles({ color }: { color: string }) {
-  const points = useRef<THREE.Points>(null);
-
-  const positions = useMemo(() => {
-    const arr = new Float32Array(PARTICLE_COUNT * 3);
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const radius = 3.4 + Math.random() * 3.2;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      arr[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-      arr[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-      arr[i * 3 + 2] = radius * Math.cos(phi);
-    }
-    return arr;
-  }, []);
-
-  useFrame((_, delta) => {
-    if (points.current) {
-      points.current.rotation.y += delta * 0.02;
-    }
-  });
-
-  return (
-    <points ref={points}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.035}
-        color={color}
-        transparent
-        opacity={0.55}
-        sizeAttenuation
-        depthWrite={false}
-      />
-    </points>
+    <>
+      {[2, 1, 0].map((i) => (
+        <Sheet key={i} index={i} texture={textures[i]} aspect={SCREENS[i].aspect} frameColor={frameColor} still={still} />
+      ))}
+    </>
   );
 }
 
 export default function Hero3D() {
   const { theme } = useTheme();
   const reducedMotion = usePrefersReducedMotion();
+  const wrapper = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(true);
 
-  const color = theme === "dark" ? "#4ade80" : "#16a34a";
-  const particleColor = theme === "dark" ? "#34d399" : "#10b981";
+  // Stop rendering once the hero is off screen.
+  useEffect(() => {
+    if (!wrapper.current) return;
+    const io = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting));
+    io.observe(wrapper.current);
+    return () => io.disconnect();
+  }, []);
+
+  const frameColor = theme === "dark" ? "#26302b" : "#dcdcd3";
 
   return (
-    <Canvas
-      camera={{ position: [0, 0, 8], fov: 42 }}
-      dpr={[1, 1.75]}
-      frameloop={reducedMotion ? "demand" : "always"}
-      gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
-      style={{ pointerEvents: "none" }}
-    >
-      <Rig>
-        <Core color={color} />
-        <OrbitRing color={color} tilt={Math.PI / 3.2} speed={0.35} />
-        <OrbitRing color={color} tilt={-Math.PI / 4.5} speed={-0.28} offset={2.5} radius={3.6} />
-        <Particles color={particleColor} />
-      </Rig>
-    </Canvas>
+    <div ref={wrapper} className="absolute inset-0">
+      <Canvas
+        flat
+        camera={{ position: [0, 0.3, 5.8], fov: 40 }}
+        dpr={[1, 1.75]}
+        frameloop={reducedMotion ? "demand" : visible ? "always" : "never"}
+        gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+        style={{ pointerEvents: "none" }}
+      >
+        <Suspense fallback={null}>
+          <Rig still={reducedMotion}>
+            <Stack frameColor={frameColor} still={reducedMotion} />
+          </Rig>
+        </Suspense>
+      </Canvas>
+    </div>
   );
 }

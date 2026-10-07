@@ -17,15 +17,15 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-// Display face used for the wordmark only — just the two weights it needs.
+// Display face for the name and headings; Geist stays on body text for legibility.
 const sora = Sora({
   variable: "--font-sora",
   subsets: ["latin"],
-  weight: ["600", "700"],
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 
-const pageTitle = `${siteConfig.name} — ${siteConfig.headline}`;
+const pageTitle = `${siteConfig.name} | ${siteConfig.headline}`;
 
 export const metadata: Metadata = {
   // Required so relative OG/Twitter image paths resolve to absolute URLs.
@@ -81,8 +81,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   colorScheme: "light dark",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#111827" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f7f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e1311" },
   ],
 };
 
@@ -103,7 +103,7 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300`}
+        className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} antialiased bg-paper text-ink`}
       >
         <ThemeProvider>{children}</ThemeProvider>
       </body>

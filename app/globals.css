@@ -2,31 +2,48 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Palette: one neutral paper/ink pair plus a single green accent. Every text
+   pairing here was checked against WCAG AA with the antislop contrast script. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --accent: #22c55e;
-  --accent-light: #4ade80;
+  --paper: #f7f7f2;
+  --surface: #ffffff;
+  --ink: #15171a;
+  --muted: #585e66;
+  --line: #dcdcd3;
+  --field-line: #858b84;
+  --accent: #15803d;
+  --on-accent: #ffffff;
+}
+
+.dark {
+  --paper: #0e1311;
+  --surface: #151b18;
+  --ink: #eef1ec;
+  --muted: #9ba49e;
+  --line: #26302b;
+  --field-line: #66726b;
+  --accent: #4ade80;
+  --on-accent: #0e1311;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-field-line: var(--field-line);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-sora);
 }
 
-.dark {
-  --background: #0f172a; /* Slate 900 for a softer dark mode */
-  --foreground: #f8fafc;
-  --accent: #4ade80;
-  --accent-light: #86efac;
-}
-
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+  /* Keeps anchored section headings clear of the fixed header. */
+  scroll-padding-top: 5rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -36,41 +53,19 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   overflow-x: hidden;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #22c55e, #16a34a);
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
   border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #4ade80, #22c55e);
-}
-
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.dark .gradient-text {
-  background: linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }

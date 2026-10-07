@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { siteConfig, siteUrl } from "./lib/site";
 
-export const alt = `${siteConfig.name} — ${siteConfig.headline}`;
+export const alt = `${siteConfig.name} | ${siteConfig.headline}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -86,7 +86,7 @@ export default function OpengraphImage() {
             marginTop: 32,
           }}
         >
-          Next.js · Node.js — Banjarmasin, Indonesia
+          Next.js · Node.js · Banjarmasin, Indonesia
         </div>
 
         <div
