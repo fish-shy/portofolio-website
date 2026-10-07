@@ -1,10 +1,11 @@
 import MotionWrapper from "./MotionWrapper";
 import SectionHeader from "./SectionHeader";
+import SkillGlobe from "./SkillGlobe";
 
 type SkillGroup = {
   title: string;
   blurb: string;
-  /** What I reach for first; set larger. */
+  /** What I reach for first; set darker on the globe and in the list. */
   core: string[];
   /** Used on projects, but not the default pick. */
   rest: string[];
@@ -37,34 +38,51 @@ const skillGroups: SkillGroup[] = [
   },
 ];
 
+const globeItems = skillGroups.flatMap((g) => [
+  ...g.core.map((label) => ({ label, core: true })),
+  ...g.rest.map((label) => ({ label, core: false })),
+]);
+
 export default function Skills() {
   return (
-    <section id="skills" aria-labelledby="skills-heading" className="px-4 sm:px-6 py-16 md:py-24">
-      <MotionWrapper className="max-w-6xl mx-auto">
-        <SectionHeader id="skills-heading" index="02" label="Stack">
-          The tools I reach for, grouped by the part of the product they build.
-        </SectionHeader>
+    <section id="skills" aria-labelledby="skills-heading" className="px-4 sm:px-6 py-20 md:py-28 overflow-x-clip">
+      <div className="max-w-6xl mx-auto">
+        <MotionWrapper>
+          <SectionHeader id="skills-heading" index="02" label="Stack">
+            The tools I reach for, grouped by the part of the product they build.
+          </SectionHeader>
+        </MotionWrapper>
 
-        <ul className="border-b border-line">
-          {skillGroups.map((group) => (
-            <li
-              key={group.title}
-              className="grid gap-3 md:grid-cols-12 md:gap-6 py-6 md:py-8 border-t border-line"
-            >
-              <div className="md:col-span-3">
-                <h3 className="font-semibold text-ink">{group.title}</h3>
-                <p className="mt-1 text-sm text-muted">{group.blurb}</p>
-              </div>
-              <div className="md:col-span-9">
-                <p className="font-display text-[clamp(1.25rem,2.6vw,1.75rem)] font-medium tracking-[-0.02em] text-ink">
-                  {group.core.join(", ")}
-                </p>
-                <p className="mt-2 text-muted">{group.rest.join(", ")}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </MotionWrapper>
+        <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+          <MotionWrapper className="lg:col-span-6 max-w-[22rem] sm:max-w-[28rem] w-full mx-auto">
+            <SkillGlobe items={globeItems} />
+            <p className="mt-2 text-center text-xs text-muted hidden lg:block">Drag to spin.</p>
+          </MotionWrapper>
+
+          <ul className="lg:col-span-6 grid gap-4 sm:grid-cols-2">
+            {skillGroups.map((group, i) => (
+              <li key={group.title}>
+                <MotionWrapper delay={i * 0.06} className="h-full rounded-2xl border border-line bg-surface p-5">
+                  <h3 className="font-display text-lg font-semibold tracking-[-0.02em] text-ink">{group.title}</h3>
+                  <p className="mt-1 text-sm text-muted">{group.blurb}</p>
+                  <ul className="mt-4 flex flex-wrap gap-1.5">
+                    {group.core.map((s) => (
+                      <li key={s} className="rounded-md bg-ink px-2 py-1 text-xs font-semibold text-paper">
+                        {s}
+                      </li>
+                    ))}
+                    {group.rest.map((s) => (
+                      <li key={s} className="rounded-md border border-line px-2 py-1 text-xs font-medium text-ink">
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                </MotionWrapper>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </section>
   );
 }

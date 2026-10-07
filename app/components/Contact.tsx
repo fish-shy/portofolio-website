@@ -6,7 +6,7 @@ import SectionHeader from "./SectionHeader";
 import { siteConfig } from "../lib/site";
 
 const fieldClass =
-  "w-full min-h-12 px-4 py-3 rounded-md border border-field-line bg-surface text-ink placeholder:text-muted focus:outline-none focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 transition-colors";
+  "w-full min-h-12 px-4 py-3 rounded-xl border border-field-line bg-paper text-ink placeholder:text-muted focus:outline-none focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 transition-colors";
 
 const channels = [
   { label: "Phone", value: siteConfig.phone, href: `tel:${siteConfig.phone.replace(/-/g, "")}` },
@@ -35,18 +35,19 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" aria-labelledby="contact-heading" className="px-4 sm:px-6 py-16 md:py-24">
+    <section id="contact" aria-labelledby="contact-heading" className="px-4 sm:px-6 py-20 md:py-28">
       <MotionWrapper className="max-w-6xl mx-auto">
         <SectionHeader id="contact-heading" index="05" label="Contact">
           Have a web or mobile project? Tell me about it.
         </SectionHeader>
 
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+        <div className="relative overflow-hidden rounded-3xl border border-line bg-surface p-6 sm:p-10 lg:p-14 grid gap-12 lg:grid-cols-12">
+          <div aria-hidden="true" className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
+          <div className="relative lg:col-span-5">
             <p className="text-sm text-muted">Email is the fastest way to reach me.</p>
             <a
               href={`mailto:${siteConfig.email}`}
-              className="mt-2 inline-block font-display text-[clamp(1.15rem,3.4vw,1.75rem)] font-semibold tracking-[-0.02em] text-ink underline decoration-accent decoration-2 underline-offset-[6px] hover:text-accent break-all"
+              className="mt-2 inline-block font-display text-[clamp(1rem,4.6vw,1.45rem)] lg:text-[clamp(1rem,1.9vw,1.45rem)] font-semibold tracking-[-0.02em] text-ink underline decoration-accent decoration-2 underline-offset-[6px] hover:text-accent [overflow-wrap:anywhere]"
             >
               {siteConfig.email}
             </a>
@@ -80,7 +81,7 @@ export default function Contact() {
             </dl>
           </div>
 
-          <form onSubmit={handleSubmit} className="lg:col-span-6 lg:col-start-7 space-y-5">
+          <form onSubmit={handleSubmit} className="relative lg:col-span-6 lg:col-start-7 space-y-5">
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-ink mb-2">
@@ -151,7 +152,7 @@ export default function Contact() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <button
                 type="submit"
-                className="inline-flex items-center justify-center min-h-12 px-6 rounded-md bg-accent text-on-accent font-semibold hover:opacity-90 transition-opacity"
+                className="inline-flex items-center justify-center min-h-12 px-6 rounded-xl bg-accent text-on-accent font-semibold hover:opacity-90 transition-opacity"
               >
                 Draft this email
               </button>

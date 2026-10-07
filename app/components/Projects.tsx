@@ -1,6 +1,7 @@
 import Image from "next/image";
 import MotionWrapper from "./MotionWrapper";
 import SectionHeader from "./SectionHeader";
+import ScrollScreen from "./ScrollScreen";
 import TiltCard from "./TiltCard";
 
 type Project = {
@@ -110,9 +111,26 @@ function ProjectLink({ project }: { project: Project }) {
   );
 }
 
+function addressFor(project: Project) {
+  if (project.link) return new URL(project.link).host;
+  return project.isPrivate ? "Private deployment, no public URL" : "Client project, no public URL";
+}
+
+function TechList({ items }: { items: string[] }) {
+  return (
+    <ul className="flex flex-wrap gap-1.5">
+      {items.map((t) => (
+        <li key={t} className="rounded-md border border-line px-2 py-1 text-xs font-medium text-ink">
+          {t}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function Projects() {
   return (
-    <section id="projects" aria-labelledby="projects-heading" className="px-4 sm:px-6 py-16 md:py-24">
+    <section id="projects" aria-labelledby="projects-heading" className="px-4 sm:px-6 py-20 md:py-28">
       <div className="max-w-6xl mx-auto">
         <MotionWrapper>
           <SectionHeader id="projects-heading" index="03" label="Selected work">
@@ -121,79 +139,81 @@ export default function Projects() {
           </SectionHeader>
         </MotionWrapper>
 
-        <ol className="space-y-16 md:space-y-28">
+        <ol className="space-y-20 md:space-y-32">
           {featured.map((project, index) => (
-            <li key={project.title}>
-              <MotionWrapper className="grid gap-6 md:gap-10 lg:grid-cols-12 lg:items-center">
-                <TiltCard className={`lg:col-span-7 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
-                  <div className="group relative aspect-[16/10] overflow-hidden rounded-md border border-line bg-surface">
-                    <Image
-                      src={project.image}
-                      alt={`Screenshot of ${project.title}`}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 40rem"
-                      className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-                    />
-                  </div>
-                </TiltCard>
+            <li key={project.title} className="grid gap-8 md:gap-12 lg:grid-cols-12 lg:items-center">
+              <div className={`lg:col-span-7 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
+                <ScrollScreen
+                  src={project.image}
+                  alt={`Screenshot of ${project.title}`}
+                  address={addressFor(project)}
+                  side={index % 2 === 1 ? "right" : "left"}
+                />
+              </div>
 
-                <div className={`lg:col-span-5 ${index % 2 === 1 ? "lg:order-1" : ""}`}>
-                  <p className="text-sm text-muted">
-                    <span className="font-mono text-accent">{String(index + 1).padStart(2, "0")}</span>
-                    {project.context && (
-                      <>
-                        <span className="mx-2" aria-hidden="true">/</span>
-                        {project.context}
-                      </>
-                    )}
-                  </p>
-                  <h3 className="mt-3 font-display text-[clamp(1.5rem,3vw,2.25rem)] font-semibold tracking-[-0.03em] leading-tight text-ink">
-                    {project.title}
-                  </h3>
-                  <p className="mt-4 leading-relaxed text-muted">{project.description}</p>
-                  <p className="mt-4 text-sm text-ink">{project.technologies.join(" · ")}</p>
-                  <div className="mt-4">
-                    <ProjectLink project={project} />
-                  </div>
+              <MotionWrapper className={`lg:col-span-5 ${index % 2 === 1 ? "lg:order-1" : ""}`}>
+                <p className="text-sm text-muted">
+                  <span className="font-mono text-accent">{String(index + 1).padStart(2, "0")}</span>
+                  {project.context && (
+                    <>
+                      <span className="mx-2" aria-hidden="true">/</span>
+                      {project.context}
+                    </>
+                  )}
+                </p>
+                <h3 className="mt-3 font-display text-[clamp(1.6rem,3.2vw,2.5rem)] font-semibold tracking-[-0.03em] leading-tight text-ink">
+                  {project.title}
+                </h3>
+                <p className="mt-4 leading-relaxed text-muted">{project.description}</p>
+                <div className="mt-5">
+                  <TechList items={project.technologies} />
+                </div>
+                <div className="mt-4">
+                  <ProjectLink project={project} />
                 </div>
               </MotionWrapper>
             </li>
           ))}
         </ol>
 
-        <MotionWrapper className="mt-20 md:mt-28">
-          <h3 className="font-display text-xl font-semibold tracking-[-0.02em] text-ink mb-6">
-            More projects
-          </h3>
-          <ul className="border-b border-line">
-            {more.map((project) => (
-              <li
-                key={project.title}
-                className="grid grid-cols-[4.5rem_1fr] sm:grid-cols-[6rem_1fr] gap-4 sm:gap-6 py-6 border-t border-line"
-              >
-                <div className="relative aspect-square rounded-md border border-line bg-white overflow-hidden">
-                  <Image
-                    src={project.image}
-                    alt={`${project.title} preview`}
-                    fill
-                    sizes="6rem"
-                    className="object-contain p-2"
-                  />
-                </div>
-                <div className="min-w-0 md:grid md:grid-cols-12 md:gap-6">
-                  <div className="md:col-span-8">
-                    <h4 className="font-semibold text-ink">{project.title}</h4>
-                    <p className="mt-1 text-muted leading-relaxed">{project.description}</p>
-                    <p className="mt-2 text-sm text-ink">{project.technologies.join(" · ")}</p>
-                  </div>
-                  <div className="md:col-span-4 md:text-right mt-1 md:mt-0">
-                    <ProjectLink project={project} />
-                  </div>
-                </div>
+        <div className="mt-24 md:mt-32">
+          <MotionWrapper>
+            <h3 className="font-display text-2xl font-semibold tracking-[-0.02em] text-ink mb-8">
+              More projects
+            </h3>
+          </MotionWrapper>
+          <ul className="grid gap-5 md:grid-cols-2">
+            {more.map((project, i) => (
+              <li key={project.title}>
+                <MotionWrapper delay={(i % 2) * 0.08} className="h-full">
+                  <TiltCard className="h-full">
+                    <article className="h-full flex flex-col rounded-2xl border border-line bg-surface overflow-hidden">
+                      <div className="relative h-40 bg-white border-b border-line">
+                        <Image
+                          src={project.image}
+                          alt={`${project.title} preview`}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 32rem"
+                          className="object-contain p-5"
+                        />
+                      </div>
+                      <div className="flex flex-1 flex-col p-6">
+                        <h4 className="font-display text-lg font-semibold tracking-[-0.02em] text-ink">{project.title}</h4>
+                        <p className="mt-2 text-muted leading-relaxed">{project.description}</p>
+                        <div className="mt-4">
+                          <TechList items={project.technologies} />
+                        </div>
+                        <div className="mt-auto pt-3">
+                          <ProjectLink project={project} />
+                        </div>
+                      </div>
+                    </article>
+                  </TiltCard>
+                </MotionWrapper>
               </li>
             ))}
           </ul>
-        </MotionWrapper>
+        </div>
       </div>
     </section>
   );

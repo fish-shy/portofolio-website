@@ -69,12 +69,18 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 bg-paper transition-[border-color] duration-300 border-b ${
-        scrolled || isMenuOpen ? "border-line" : "border-transparent"
-      }`}
+      className="fixed top-0 inset-x-0 z-50 px-3 sm:px-4 pt-3"
     >
-      <nav aria-label="Main" className="px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto h-16 flex items-center justify-between gap-6">
+      {/* The bar is the page's one frosted surface: content scrolls underneath it. */}
+      <nav
+        aria-label="Main"
+        className={`max-w-6xl mx-auto rounded-2xl border transition-[background-color,border-color,box-shadow] duration-300 ${
+          scrolled || isMenuOpen
+            ? "bg-paper/80 backdrop-blur-md border-line shadow-[0_10px_30px_-20px_rgba(0,0,0,0.4)]"
+            : "bg-transparent border-transparent"
+        }`}
+      >
+        <div className="h-14 px-3 sm:px-4 flex items-center justify-between gap-6">
           <a href="#home" className="font-display text-lg font-semibold tracking-[-0.02em] text-ink">
             Hafiz Nazwa
             <span className="sr-only"> (back to top)</span>
@@ -123,10 +129,10 @@ export default function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden bg-paper border-b border-line"
+            className="lg:hidden max-w-6xl mx-auto mt-2 rounded-2xl bg-paper border border-line shadow-[0_10px_30px_-20px_rgba(0,0,0,0.4)]"
           >
-            <div className="px-4 sm:px-6">
-              <ul className="max-w-6xl mx-auto py-3">
+            <div className="px-4">
+              <ul className="py-2">
                 {navigationLinks.map((link) => (
                   <li key={link.href} className="border-b border-line last:border-b-0">
                     <a
