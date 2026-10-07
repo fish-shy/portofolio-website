@@ -25,7 +25,7 @@ const sora = Sora({
   display: "swap",
 });
 
-const pageTitle = `${siteConfig.name} — ${siteConfig.headline}`;
+const pageTitle = `${siteConfig.name} | ${siteConfig.headline}`;
 
 export const metadata: Metadata = {
   // Required so relative OG/Twitter image paths resolve to absolute URLs.
