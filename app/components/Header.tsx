@@ -73,43 +73,45 @@ export default function Header() {
         scrolled || isMenuOpen ? "border-line" : "border-transparent"
       }`}
     >
-      <nav aria-label="Main" className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-6">
-        <a href="#home" className="font-display text-lg font-semibold tracking-[-0.02em] text-ink">
-          Hafiz Nazwa
-          <span className="sr-only"> (back to top)</span>
-        </a>
+      <nav aria-label="Main" className="px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto h-16 flex items-center justify-between gap-6">
+          <a href="#home" className="font-display text-lg font-semibold tracking-[-0.02em] text-ink">
+            Hafiz Nazwa
+            <span className="sr-only"> (back to top)</span>
+          </a>
 
-        <div className="hidden lg:flex items-center gap-1">
-          {navigationLinks.map((link) => {
-            const active = activeSection === link.href.slice(1);
-            return (
-              <a
-                key={link.href}
-                href={link.href}
-                aria-current={active ? "true" : undefined}
-                className={`px-3 py-2 text-[0.95rem] rounded-md transition-colors ${
-                  active ? "text-ink font-medium" : "text-muted hover:text-ink"
-                }`}
-              >
-                {link.label}
-              </a>
-            );
-          })}
-          <span className="w-px h-6 bg-line mx-3" aria-hidden="true" />
-          <ThemeToggle />
-        </div>
+          <div className="hidden lg:flex items-center gap-1">
+            {navigationLinks.map((link) => {
+              const active = activeSection === link.href.slice(1);
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "true" : undefined}
+                  className={`px-3 py-2 text-[0.95rem] rounded-md transition-colors ${
+                    active ? "text-ink font-medium" : "text-muted hover:text-ink"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
+            <span className="w-px h-6 bg-line mx-3" aria-hidden="true" />
+            <ThemeToggle />
+          </div>
 
-        <div className="flex lg:hidden items-center gap-2">
-          <ThemeToggle />
-          <button
-            type="button"
-            onClick={() => setIsMenuOpen((open) => !open)}
-            aria-expanded={isMenuOpen}
-            aria-controls="mobile-menu"
-            className="h-11 px-4 inline-flex items-center rounded-md border border-line hover:border-field-line text-sm font-medium text-ink transition-colors"
-          >
-            {isMenuOpen ? "Close" : "Menu"}
-          </button>
+          <div className="flex lg:hidden items-center gap-2">
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen((open) => !open)}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
+              className="h-11 px-4 inline-flex items-center rounded-md border border-line hover:border-field-line text-sm font-medium text-ink transition-colors"
+            >
+              {isMenuOpen ? "Close" : "Menu"}
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -123,19 +125,21 @@ export default function Header() {
             transition={{ duration: 0.2 }}
             className="lg:hidden bg-paper border-b border-line"
           >
-            <ul className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
-              {navigationLinks.map((link) => (
-                <li key={link.href} className="border-b border-line last:border-b-0">
-                  <a
-                    href={link.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center min-h-12 font-display text-xl font-medium text-ink"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <div className="px-4 sm:px-6">
+              <ul className="max-w-6xl mx-auto py-3">
+                {navigationLinks.map((link) => (
+                  <li key={link.href} className="border-b border-line last:border-b-0">
+                    <a
+                      href={link.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center min-h-12 font-display text-xl font-medium text-ink"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

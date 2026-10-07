@@ -1,3 +1,4 @@
+import Image from "next/image";
 import MotionWrapper from "./MotionWrapper";
 import SectionHeader from "./SectionHeader";
 import { siteConfig } from "../lib/site";
@@ -18,8 +19,18 @@ export default function About() {
           using.
         </SectionHeader>
 
-        <div className="grid gap-12 md:grid-cols-12">
-          <div className="md:col-span-6 md:col-start-4 space-y-5 text-lg leading-relaxed text-muted">
+        <div className="grid gap-10 md:gap-12 md:grid-cols-12">
+          <div className="md:col-span-4 lg:col-span-3 relative aspect-[4/5] w-full max-w-[16rem] md:max-w-none overflow-hidden rounded-md bg-surface">
+            <Image
+              src="/assets/images/profile.png"
+              alt="Portrait of Hafiz Nazwa Nugraha"
+              fill
+              sizes="(max-width: 768px) 16rem, 18rem"
+              className="object-cover object-top"
+            />
+          </div>
+
+          <div className="md:col-span-8 lg:col-span-6 space-y-5 text-lg leading-relaxed text-muted">
             <p>
               I&apos;m a Computer Science student at{" "}
               <span className="text-ink">{siteConfig.university}</span> with
@@ -33,7 +44,7 @@ export default function About() {
             </p>
           </div>
 
-          <dl className="md:col-span-3 self-start text-sm divide-y divide-line border-y border-line">
+          <dl className="md:col-span-12 lg:col-span-3 self-start text-sm divide-y divide-line border-y border-line">
             {facts.map((fact) => (
               <div key={fact.term} className="py-3">
                 <dt className="text-muted">{fact.term}</dt>

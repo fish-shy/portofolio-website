@@ -1,6 +1,7 @@
 import Image from "next/image";
 import MotionWrapper from "./MotionWrapper";
 import SectionHeader from "./SectionHeader";
+import TiltCard from "./TiltCard";
 
 type Project = {
   title: string;
@@ -124,19 +125,17 @@ export default function Projects() {
           {featured.map((project, index) => (
             <li key={project.title}>
               <MotionWrapper className="grid gap-6 md:gap-10 lg:grid-cols-12 lg:items-center">
-                <div
-                  className={`group lg:col-span-7 relative aspect-[16/10] overflow-hidden rounded-md border border-line bg-surface ${
-                    index % 2 === 1 ? "lg:order-2" : ""
-                  }`}
-                >
-                  <Image
-                    src={project.image}
-                    alt={`Screenshot of ${project.title}`}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 40rem"
-                    className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-                  />
-                </div>
+                <TiltCard className={`lg:col-span-7 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
+                  <div className="group relative aspect-[16/10] overflow-hidden rounded-md border border-line bg-surface">
+                    <Image
+                      src={project.image}
+                      alt={`Screenshot of ${project.title}`}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 40rem"
+                      className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                    />
+                  </div>
+                </TiltCard>
 
                 <div className={`lg:col-span-5 ${index % 2 === 1 ? "lg:order-1" : ""}`}>
                   <p className="text-sm text-muted">

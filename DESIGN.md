@@ -2,12 +2,13 @@
 
 Taken from the site's existing identity (green accent, Sora for the name, light and dark themes). Edit this file to change the direction; the antislop skills read it before any UI work.
 
-Reading this as: a personal portfolio for clients and recruiters hiring a web and mobile engineer, in an editorial print-like style. Dial: ENERGY 2 / RHYTHM 3 / MOTION 2.
+Reading this as: a personal portfolio for clients and recruiters hiring a web and mobile engineer, in an editorial print-like style. Dial: ENERGY 3 / RHYTHM 3 / MOTION 3.
 
 ## Identity
 
 - Personality: plain-spoken, practical, confident about real work rather than claims.
 - Motif: every section opens with a hairline rule and a numbered label (`01 / About`), and lists use the same hairline rows. It reads like a printed CV or catalogue.
+- Motif: screenshots behave as physical sheets. The hero stacks three real project screens in 3D, and the same screens tilt toward the cursor in Work.
 - Focal point per screen: the name in the hero, the screenshot in each featured project, the email address in Contact.
 
 ## Palette
@@ -31,7 +32,8 @@ Every text pairing was checked with `.claude/skills/antislop-human/contrast-chec
 
 - No cards: content sits on hairline rows so hierarchy comes from type size, not boxes and shadows.
 - Projects with a full screenshot get a large alternating row; projects with only a logo sit in a compact list.
-- No background grid, glow, orbs, particles, or 3D scene: none of them said anything about the work.
-- Motion: the name rises in once on load, each section fades up once as it enters the viewport, hover states elsewhere. Reduced motion turns the durations to zero.
+- 3D (owner's request): the hero scene is built only from real screenshots in Work, so it shows the work instead of decorating around it. The canvas stops rendering off screen, shows a static screenshot while loading or without WebGL, and holds still for reduced motion.
+- No background grid, glow, orbs, or particles: none of them said anything about the work.
+- Motion: the name rises in once on load; the 3D stack tilts toward the cursor, drifts slightly so depth reads on touch screens, and fans apart as the hero scrolls away; each section fades up once; featured screenshots tilt on hover. Reduced motion turns all of it off.
 - The `↗` arrow appears only on links that leave the site.
 - Radius is a small 6px everywhere; nothing is pill-shaped.
