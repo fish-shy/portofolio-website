@@ -24,9 +24,9 @@ export default function About() {
 
         <div className="grid gap-10 lg:gap-16 md:grid-cols-12 md:items-center">
           <MotionWrapper className="md:col-span-5">
-            <div className="relative mx-auto max-w-[22rem]" style={{ perspective: 1200 }}>
+            <div className="relative mx-auto max-w-[19rem] sm:max-w-[22rem] pr-3 pb-3 sm:pr-0 sm:pb-0" style={{ perspective: 1200 }}>
               {/* Offset plate behind the photo gives the tilt a visible back layer. */}
-              <div aria-hidden="true" className="absolute inset-0 translate-x-4 translate-y-4 rounded-2xl border border-accent/60" />
+              <div aria-hidden="true" className="absolute left-0 top-0 right-3 bottom-3 sm:right-0 sm:bottom-0 translate-x-3 translate-y-3 sm:translate-x-4 sm:translate-y-4 rounded-2xl border border-accent/60" />
               <TiltCard intensity={10}>
                 <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-surface shadow-[0_30px_60px_-30px_rgba(0,0,0,0.5)]">
                   <Image
@@ -34,7 +34,7 @@ export default function About() {
                     alt="Portrait of Hafiz Nazwa Nugraha"
                     fill
                     sizes="(max-width: 768px) 22rem, 26rem"
-                    className="object-cover object-[50%_25%]"
+                    className="object-cover object-top"
                   />
                 </div>
               </TiltCard>
