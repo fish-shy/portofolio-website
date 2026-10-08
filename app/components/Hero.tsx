@@ -1,9 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { Component, useEffect, useState, type ReactNode } from "react";
-import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { siteConfig } from "../lib/site";
 
 // Same order as WEB_SCREENS in Hero3D, which loads one texture per entry.
@@ -14,7 +13,7 @@ class WebGLBoundary extends Component<{ children: ReactNode }, { failed: boolean
   static getDerivedStateFromError() {
     return { failed: true };
   }
-  // Without WebGL the portrait and its glow still carry the hero on their own.
+  // Without WebGL the glow stays and the text carries the hero on its own.
   render() {
     return this.state.failed ? null : this.props.children;
   }
@@ -34,22 +33,6 @@ export default function Hero() {
     return () => clearInterval(id);
   }, [pinned, reduce]);
 
-  // The portrait drifts a little against the 3D stage so the two read as separate depths.
-  const px = useMotionValue(0);
-  const py = useMotionValue(0);
-  const portraitX = useSpring(px, { stiffness: 60, damping: 18 });
-  const portraitY = useSpring(py, { stiffness: 60, damping: 18 });
-  useEffect(() => {
-    if (reduce) return;
-    const onMove = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") return;
-      px.set(((e.clientX / window.innerWidth) * 2 - 1) * -10);
-      py.set(((e.clientY / window.innerHeight) * 2 - 1) * -6);
-    };
-    window.addEventListener("pointermove", onMove);
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [reduce, px, py]);
-
   // Always keep an animate target: the server renders the initial state, and
   // reduced motion only collapses the duration so the content still shows.
   const rise = (delay: number) => ({
@@ -67,9 +50,9 @@ export default function Hero() {
       className="relative overflow-hidden px-4 sm:px-6 pt-20 pb-14 lg:py-0"
     >
       <div className="relative mx-auto grid w-full max-w-6xl items-center gap-6 lg:min-h-[100dvh] lg:grid-cols-12 lg:gap-4">
-        {/* Stage: 3D scene behind, cut-out portrait standing on its disc. Comes first on phones. */}
-        <div className="relative lg:order-2 lg:col-span-7 lg:self-end">
-          <div className="relative mx-auto h-[min(64svh,30rem)] w-full max-w-[34rem] sm:h-[36rem] lg:h-[min(50rem,94dvh)] lg:max-w-none">
+        {/* Stage: the 3D logo, laptop and phone. Comes first on phones so the 3D is on the first screen. */}
+        <div className="relative lg:order-2 lg:col-span-7">
+          <div className="relative mx-auto h-[min(56svh,26rem)] w-full max-w-[34rem] sm:h-[34rem] lg:h-[min(46rem,90dvh)] lg:max-w-none">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute left-1/2 top-[18%] h-[70%] w-[90%] -translate-x-1/2 rounded-full bg-accent/15 blur-[90px]"
@@ -92,26 +75,6 @@ export default function Hero() {
               </WebGLBoundary>
             </div>
 
-            <motion.div
-              className="pointer-events-none absolute bottom-[10%] left-1/2 h-[78%] aspect-[1040/1600] -translate-x-1/2"
-              style={{ x: portraitX, y: portraitY }}
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={reduce ? { duration: 0 } : { duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <Image
-                src="/assets/images/hafiz-cutout.webp"
-                alt="Hafiz Nazwa Nugraha, arms crossed, in a black shirt"
-                fill
-                priority
-                sizes="(max-width: 640px) 70vw, (max-width: 1024px) 24rem, 34rem"
-                className="object-contain object-bottom"
-                style={{
-                  maskImage: "linear-gradient(to bottom, black 86%, transparent 100%)",
-                  WebkitMaskImage: "linear-gradient(to bottom, black 86%, transparent 100%)",
-                }}
-              />
-            </motion.div>
           </div>
 
           <div className="mt-3 hidden sm:flex flex-wrap items-center justify-center gap-3">

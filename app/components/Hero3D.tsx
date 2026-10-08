@@ -24,7 +24,7 @@ const PHONE_SCREEN = { src: "/assets/images/learnfy.png", w: 277, h: 238 };
 // The optimizer hands the GPU a 1200px texture instead of the 2.5k originals.
 const textureUrl = (src: string, w = 1200) => `/_next/image?url=${encodeURIComponent(src)}&w=${w}&q=80`;
 
-/** Height of the stage disc; the portrait in Hero.tsx is placed to stand on it. */
+/** Height of the stage disc under the logo. */
 const PLATFORM_Y = -1.75;
 const SCREEN_W = 3.0;
 const SCREEN_H = 1.86;
@@ -172,8 +172,69 @@ function Phone({ palette }: { palette: Palette }) {
   );
 }
 
+/** The site's "H" mark from app/icon.svg, extruded into a glossy block. */
+function LogoMark({ still, dark }: { still: boolean; dark: boolean }) {
+  const ref = useRef<THREE.Group>(null);
+
+  const { block, letter } = useMemo(() => {
+    // icon.svg works in a 64-unit box with y pointing down; centre it and flip y.
+    const u = (x: number, y: number) => new THREE.Vector2((x - 32) / 32, (32 - y) / 32);
+
+    const r = 15 / 32;
+    const box = new THREE.Shape();
+    box.moveTo(-1 + r, -1);
+    box.lineTo(1 - r, -1);
+    box.quadraticCurveTo(1, -1, 1, -1 + r);
+    box.lineTo(1, 1 - r);
+    box.quadraticCurveTo(1, 1, 1 - r, 1);
+    box.lineTo(-1 + r, 1);
+    box.quadraticCurveTo(-1, 1, -1, 1 - r);
+    box.lineTo(-1, -1 + r);
+    box.quadraticCurveTo(-1, -1, -1 + r, -1);
+
+    const h = new THREE.Shape([
+      u(20, 15), u(27.5, 15), u(27.5, 28.2), u(36.5, 28.2), u(36.5, 15), u(44, 15),
+      u(44, 49), u(36.5, 49), u(36.5, 35.4), u(27.5, 35.4), u(27.5, 49), u(20, 49),
+    ]);
+
+    const block = new THREE.ExtrudeGeometry(box, {
+      depth: 0.42, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.06, bevelSegments: 8, curveSegments: 24,
+    });
+    block.center();
+    const letter = new THREE.ExtrudeGeometry(h, {
+      depth: 0.14, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.02, bevelSegments: 4,
+    });
+    letter.center();
+    return { block, letter };
+  }, []);
+
+  useFrame((state, delta) => {
+    if (!ref.current || still) return;
+    // Swing rather than spin, so the letter is never seen edge-on or backwards.
+    const target = Math.sin(state.clock.elapsedTime * 0.5) * 0.45;
+    ref.current.rotation.y = THREE.MathUtils.damp(ref.current.rotation.y, target, 2, delta);
+  });
+
+  return (
+    <group ref={ref}>
+      <mesh geometry={block}>
+        <meshPhysicalMaterial
+          color={dark ? "#22c55e" : "#16a34a"}
+          roughness={0.22}
+          metalness={0.15}
+          clearcoat={1}
+          clearcoatRoughness={0.12}
+        />
+      </mesh>
+      <mesh geometry={letter} position={[0, 0, 0.3]}>
+        <meshStandardMaterial color="#ffffff" roughness={0.3} metalness={0.05} />
+      </mesh>
+    </group>
+  );
+}
+
 /* Leans the whole stage toward the cursor. Listens on window because the
-   portrait sits on top of the canvas and takes the pointer events. */
+   canvas ignores pointer events so it never blocks scrolling. */
 function Rig({ children, still }: { children: ReactNode; still: boolean }) {
   const group = useRef<THREE.Group>(null);
   const pointer = useRef({ x: 0, y: 0 });
@@ -197,7 +258,7 @@ function Rig({ children, still }: { children: ReactNode; still: boolean }) {
   return <group ref={group}>{children}</group>;
 }
 
-/** The disc the portrait stands on, with a lit rim so the person reads as on stage. */
+/** The disc the logo floats over, with a lit rim so it reads as the centrepiece. */
 function Platform({ palette }: { palette: Palette }) {
   return (
     <group position={[0, PLATFORM_Y, 0]}>
@@ -217,7 +278,7 @@ function Platform({ palette }: { palette: Palette }) {
   );
 }
 
-/** One tilted ring around the figure with a marker travelling along it. */
+/** One tilted ring around the logo with a marker travelling along it. */
 function Orbit({ palette, still }: { palette: Palette; still: boolean }) {
   const dot = useRef<THREE.Mesh>(null);
   const R = 2.05;
@@ -268,13 +329,18 @@ function Scene({ active, still, dark }: { active: number; still: boolean; dark: 
         <Platform palette={palette} />
         <Orbit palette={palette} still={still} />
 
+        <Float enabled={!still} speed={1.3} rotationIntensity={0.15} floatIntensity={0.5}>
+          <group position={[0, -0.35, 0.5]} scale={0.95}>
+            <LogoMark still={still} dark={dark} />
+          </group>
+        </Float>
         <Float enabled={!still} speed={1.1} rotationIntensity={0.12} floatIntensity={0.4}>
-          <group position={[-1.1 * spread, 1.05, -1.7]} rotation={[0.12, 0.55, 0]} scale={0.56}>
+          <group position={[-1.05 * spread, 1.15, -1.9]} rotation={[0.12, 0.5, 0]} scale={0.56}>
             <Laptop active={active} palette={palette} still={still} />
           </group>
         </Float>
         <Float enabled={!still} speed={1.5} rotationIntensity={0.25} floatIntensity={0.6}>
-          <group position={[1.5 * spread, -0.35, 0.6]} rotation={[0.04, -0.5, 0.06]} scale={0.62}>
+          <group position={[1.6 * spread, 0.35, -0.4]} rotation={[0.04, -0.5, 0.06]} scale={0.6}>
             <Phone palette={palette} />
           </group>
         </Float>
