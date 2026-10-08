@@ -3,45 +3,24 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Component, useEffect, useState, type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { siteConfig } from "../lib/site";
 
 // Same order as WEB_SCREENS in Hero3D, which loads one texture per entry.
-const SCREENS = [
-  { title: "CreativeChain", src: "/assets/images/creativechain.png" },
-  { title: "Village Budget", src: "/assets/images/sipandai.png" },
-  { title: "CLINICALgo", src: "/assets/images/clinicalgo.png" },
-  { title: "SmartCal", src: "/assets/images/smartcal.png" },
-];
+const SCREENS = ["CreativeChain", "Village Budget", "CLINICALgo", "SmartCal"];
 
-// Shown while three.js loads, and kept if the browser has no WebGL.
-function StaticScreen({ active = 0 }: { active?: number }) {
-  return (
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div className="relative w-[80%] aspect-[16/10] rounded-xl border-[6px] border-[#0f1211] overflow-hidden bg-surface shadow-2xl">
-        <Image
-          src={SCREENS[active].src}
-          alt=""
-          fill
-          sizes="(max-width: 1024px) 80vw, 40rem"
-          className={active === 0 ? "object-contain bg-[#090a12]" : "object-cover object-top"}
-        />
-      </div>
-    </div>
-  );
-}
-
-class WebGLBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { failed: boolean }> {
+class WebGLBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
     return { failed: true };
   }
+  // Without WebGL the portrait and its glow still carry the hero on their own.
   render() {
-    return this.state.failed ? this.props.fallback : this.props.children;
+    return this.state.failed ? null : this.props.children;
   }
 }
 
-const Hero3D = dynamic(() => import("./Hero3D"), { ssr: false, loading: () => <StaticScreen /> });
+const Hero3D = dynamic(() => import("./Hero3D"), { ssr: false, loading: () => null });
 
 export default function Hero() {
   const reduce = useReducedMotion();
@@ -54,6 +33,22 @@ export default function Hero() {
     const id = setInterval(() => setActive((i) => (i + 1) % SCREENS.length), 5000);
     return () => clearInterval(id);
   }, [pinned, reduce]);
+
+  // The portrait drifts a little against the 3D stage so the two read as separate depths.
+  const px = useMotionValue(0);
+  const py = useMotionValue(0);
+  const portraitX = useSpring(px, { stiffness: 60, damping: 18 });
+  const portraitY = useSpring(py, { stiffness: 60, damping: 18 });
+  useEffect(() => {
+    if (reduce) return;
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      px.set(((e.clientX / window.innerWidth) * 2 - 1) * -10);
+      py.set(((e.clientY / window.innerHeight) * 2 - 1) * -6);
+    };
+    window.addEventListener("pointermove", onMove);
+    return () => window.removeEventListener("pointermove", onMove);
+  }, [reduce, px, py]);
 
   // Always keep an animate target: the server renders the initial state, and
   // reduced motion only collapses the duration so the content still shows.
@@ -69,24 +64,85 @@ export default function Hero() {
     <section
       id="home"
       aria-labelledby="hero-heading"
-      className="relative px-4 sm:px-6 pt-28 pb-16 lg:pt-32 lg:pb-20 lg:min-h-[100dvh] flex items-center overflow-hidden"
+      className="relative overflow-hidden px-4 sm:px-6 pt-20 pb-14 lg:py-0"
     >
-      {/* One soft wash in the accent colour, behind the devices only. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute right-[-10%] top-[10%] h-[42rem] w-[42rem] max-w-[100vw] rounded-full bg-accent/10 blur-[120px]"
-      />
+      <div className="relative mx-auto grid w-full max-w-6xl items-center gap-6 lg:min-h-[100dvh] lg:grid-cols-12 lg:gap-4">
+        {/* Stage: 3D scene behind, cut-out portrait standing on its disc. Comes first on phones. */}
+        <div className="relative lg:order-2 lg:col-span-7 lg:self-end">
+          <div className="relative mx-auto h-[min(64svh,30rem)] w-full max-w-[34rem] sm:h-[36rem] lg:h-[min(50rem,94dvh)] lg:max-w-none">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute left-1/2 top-[18%] h-[70%] w-[90%] -translate-x-1/2 rounded-full bg-accent/15 blur-[90px]"
+            />
+            {/* Fade the canvas edges so the floor rings dissolve instead of ending on a hard line. */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 -mx-4 sm:mx-0"
+              style={{
+                maskImage:
+                  "linear-gradient(to bottom, black 78%, transparent 100%), linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, black 78%, transparent 100%), linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+                maskComposite: "intersect",
+                WebkitMaskComposite: "source-in",
+              }}
+            >
+              <WebGLBoundary>
+                <Hero3D active={active} />
+              </WebGLBoundary>
+            </div>
 
-      <div className="relative w-full max-w-6xl mx-auto grid gap-8 lg:grid-cols-12 lg:gap-6 items-center">
-        <div className="lg:col-span-5 relative z-10">
-          <motion.p {...rise(0)} className="inline-flex items-center gap-2 text-sm text-muted">
-            <span className="h-px w-8 bg-accent" aria-hidden="true" />
-            {siteConfig.address.locality}, Indonesia
-          </motion.p>
+            <motion.div
+              className="pointer-events-none absolute bottom-[10%] left-1/2 h-[78%] aspect-[1040/1600] -translate-x-1/2"
+              style={{ x: portraitX, y: portraitY }}
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={reduce ? { duration: 0 } : { duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <Image
+                src="/assets/images/hafiz-cutout.webp"
+                alt="Hafiz Nazwa Nugraha, arms crossed, in a black shirt"
+                fill
+                priority
+                sizes="(max-width: 640px) 70vw, (max-width: 1024px) 24rem, 34rem"
+                className="object-contain object-bottom"
+                style={{
+                  maskImage: "linear-gradient(to bottom, black 86%, transparent 100%)",
+                  WebkitMaskImage: "linear-gradient(to bottom, black 86%, transparent 100%)",
+                }}
+              />
+            </motion.div>
+          </div>
 
+          <div className="mt-3 hidden sm:flex flex-wrap items-center justify-center gap-3">
+            <p className="text-sm text-muted" id="screen-picker-label">
+              On the laptop:
+            </p>
+            <div role="group" aria-labelledby="screen-picker-label" className="flex flex-wrap justify-center gap-1 rounded-xl border border-line bg-surface/70 p-1">
+              {SCREENS.map((title, i) => (
+                <button
+                  key={title}
+                  type="button"
+                  aria-pressed={active === i}
+                  onClick={() => {
+                    setActive(i);
+                    setPinned(true);
+                  }}
+                  className={`min-h-10 px-3 rounded-lg text-sm font-medium transition-colors ${
+                    active === i ? "bg-ink text-paper" : "text-muted hover:text-ink"
+                  }`}
+                >
+                  {title}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="relative z-10 lg:order-1 lg:col-span-5 lg:py-32">
           <h1
             id="hero-heading"
-            className="mt-6 font-display font-semibold tracking-[-0.045em] leading-[0.95] text-[clamp(2.9rem,7vw,5.5rem)]"
+            className="font-display font-semibold tracking-[-0.045em] leading-[0.95] text-[clamp(2.9rem,7vw,5.25rem)]"
           >
             <motion.span className="block" {...rise(0.08)}>
               Hafiz Nazwa
@@ -102,7 +158,8 @@ export default function Hero() {
 
           <motion.p {...rise(0.3)} className="mt-4 max-w-md text-base md:text-lg leading-relaxed text-muted">
             I build web and mobile apps end to end, from the database schema to
-            the screen people tap. Full-stack developer at {siteConfig.employer}.
+            the screen people tap. Full-stack developer at {siteConfig.employer},
+            based in {siteConfig.address.locality}, Indonesia.
           </motion.p>
 
           <motion.div {...rise(0.36)} className="mt-9 flex flex-col sm:flex-row gap-3">
@@ -120,42 +177,9 @@ export default function Hero() {
             </a>
           </motion.div>
 
-          <motion.p {...rise(0.42)} className="mt-9 text-sm text-muted">
+          <motion.p {...rise(0.42)} className="mt-8 text-sm text-muted">
             Open to freelance and full-time work.
           </motion.p>
-        </div>
-
-        <div className="lg:col-span-7">
-          <div aria-hidden="true" className="relative h-[20rem] sm:h-[28rem] lg:h-[36rem] -mx-4 sm:mx-0">
-            <WebGLBoundary fallback={<StaticScreen active={active} />}>
-              <Hero3D active={active} />
-            </WebGLBoundary>
-          </div>
-
-          <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3">
-            <p className="text-sm text-muted text-center" id="screen-picker-label">
-              On the screen:
-            </p>
-            <div role="group" aria-labelledby="screen-picker-label" className="flex flex-wrap justify-center gap-1 rounded-xl border border-line bg-surface/70 p-1">
-              {SCREENS.map((s, i) => (
-                <button
-                  key={s.title}
-                  type="button"
-                  aria-pressed={active === i}
-                  onClick={() => {
-                    setActive(i);
-                    setPinned(true);
-                  }}
-                  className={`min-h-10 px-3 rounded-lg text-sm font-medium transition-colors ${
-                    active === i ? "bg-ink text-paper" : "text-muted hover:text-ink"
-                  }`}
-                >
-                  {s.title}
-                </button>
-              ))}
-            </div>
-          </div>
-          <p className="mt-3 hidden lg:block text-center text-xs text-muted">Drag the devices to turn them.</p>
         </div>
       </div>
     </section>

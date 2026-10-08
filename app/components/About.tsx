@@ -30,11 +30,11 @@ export default function About() {
               <TiltCard intensity={10}>
                 <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-surface shadow-[0_30px_60px_-30px_rgba(0,0,0,0.5)]">
                   <Image
-                    src="/assets/images/profile.png"
+                    src="/assets/images/hafiz.jpg"
                     alt="Portrait of Hafiz Nazwa Nugraha"
                     fill
                     sizes="(max-width: 768px) 22rem, 26rem"
-                    className="object-cover object-top"
+                    className="object-cover object-[50%_25%]"
                   />
                 </div>
               </TiltCard>

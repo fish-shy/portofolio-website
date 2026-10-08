@@ -18,7 +18,7 @@ export default function StructuredData() {
         "@id": personId,
         name: siteConfig.name,
         url: siteUrl,
-        image: absoluteUrl("/assets/images/profile.png"),
+        image: absoluteUrl("/assets/images/hafiz.jpg"),
         jobTitle: siteConfig.jobTitle,
         description: siteConfig.description,
         email: `mailto:${siteConfig.email}`,
