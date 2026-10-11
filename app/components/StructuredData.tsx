@@ -33,10 +33,6 @@ export default function StructuredData() {
           "@type": "CollegeOrUniversity",
           name: siteConfig.university,
         },
-        worksFor: {
-          "@type": "Organization",
-          name: siteConfig.employer,
-        },
         knowsAbout: siteConfig.skills,
         knowsLanguage: ["id", "en"],
         sameAs: [siteConfig.socials.github, siteConfig.socials.linkedin],

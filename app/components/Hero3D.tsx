@@ -1,48 +1,10 @@
 "use client";
 
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import {
-  ContactShadows,
-  Environment,
-  Float,
-  Lightformer,
-  RoundedBox,
-} from "@react-three/drei";
-import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { ContactShadows, Environment, Float, Lightformer, RoundedBox } from "@react-three/drei";
+import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
 import { useTheme } from "./ThemeProvider";
-
-export const WEB_SCREENS = [
-  // Wider than the screen, so it is shown whole on a dark backing instead of cropped.
-  { title: "CreativeChain", src: "/assets/images/creativechain.png", w: 480, h: 252, contain: true },
-  { title: "Village Budget Monitoring", src: "/assets/images/sipandai.png", w: 2559, h: 1310 },
-  { title: "CLINICALgo", src: "/assets/images/clinicalgo.png", w: 2540, h: 1306 },
-  { title: "SmartCal", src: "/assets/images/smartcal.png", w: 2550, h: 1432 },
-];
-const PHONE_SCREEN = { src: "/assets/images/learnfy.png", w: 277, h: 238 };
-
-// The optimizer hands the GPU a 1200px texture instead of the 2.5k originals.
-const textureUrl = (src: string, w = 1200) => `/_next/image?url=${encodeURIComponent(src)}&w=${w}&q=80`;
-
-/** Height of the stage disc under the logo. */
-const PLATFORM_Y = -1.75;
-const SCREEN_W = 3.0;
-const SCREEN_H = 1.86;
-
-/** Crop a texture like CSS object-fit: cover, anchored to the top edge. */
-function coverTop(tex: THREE.Texture, imgAspect: number, planeAspect: number) {
-  tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
-  if (imgAspect > planeAspect) {
-    tex.repeat.set(planeAspect / imgAspect, 1);
-    tex.offset.set((1 - tex.repeat.x) / 2, 0);
-  } else {
-    tex.repeat.set(1, imgAspect / planeAspect);
-    tex.offset.set(0, 1 - tex.repeat.y);
-  }
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
-  tex.needsUpdate = true;
-}
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -56,184 +18,9 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
-type Palette = { body: string; deck: string; bezel: string; accent: string };
+type Palette = { accent: string; accentDeep: string; ink: string; pale: string };
 
-function Laptop({ active, palette, still }: { active: number; palette: Palette; still: boolean }) {
-  const lid = useRef<THREE.Group>(null);
-  const textures = useLoader(
-    THREE.TextureLoader,
-    WEB_SCREENS.map((s) => textureUrl(s.src))
-  );
-
-  useMemo(() => {
-    textures.forEach((t, i) => {
-      const s = WEB_SCREENS[i];
-      if ("contain" in s) {
-        t.colorSpace = THREE.SRGBColorSpace;
-        t.anisotropy = 8;
-        t.needsUpdate = true;
-      } else {
-        coverTop(t, s.w / s.h, SCREEN_W / SCREEN_H);
-      }
-    });
-  }, [textures]);
-
-  // The lid starts shut and opens once on load; scrolling past the hero closes it again.
-  const OPEN = -0.28;
-  const SHUT = -Math.PI / 2 + 0.02;
-  useEffect(() => {
-    if (lid.current) lid.current.rotation.x = still ? OPEN : SHUT;
-  }, [still, OPEN, SHUT]);
-
-  useFrame((_, delta) => {
-    if (!lid.current || still) return;
-    const scrolled = Math.min(window.scrollY / (window.innerHeight * 0.9), 1);
-    const target = THREE.MathUtils.lerp(OPEN, SHUT * 0.55, scrolled);
-    lid.current.rotation.x = THREE.MathUtils.damp(lid.current.rotation.x, target, 3.2, delta);
-  });
-
-  return (
-    <group>
-      {/* Base */}
-      <RoundedBox args={[3.3, 0.12, 2.25]} radius={0.05} smoothness={4} position={[0, 0, 0]}>
-        <meshStandardMaterial color={palette.body} metalness={0.6} roughness={0.35} />
-      </RoundedBox>
-      {/* Keyboard well and trackpad */}
-      <mesh position={[0, 0.061, -0.25]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[2.85, 1.05]} />
-        <meshStandardMaterial color={palette.deck} roughness={0.8} />
-      </mesh>
-      <mesh position={[0, 0.061, 0.68]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[1.05, 0.6]} />
-        <meshStandardMaterial color={palette.deck} roughness={0.5} metalness={0.2} />
-      </mesh>
-
-      {/* Lid hinged on the back edge of the base */}
-      <group ref={lid} position={[0, 0.06, -1.1]}>
-        <RoundedBox args={[3.3, 2.15, 0.07]} radius={0.04} smoothness={4} position={[0, 1.075, -0.035]}>
-          <meshStandardMaterial color={palette.body} metalness={0.6} roughness={0.35} />
-        </RoundedBox>
-        <mesh position={[0, 1.075, 0.002]}>
-          <planeGeometry args={[3.2, 2.05]} />
-          <meshStandardMaterial color={palette.bezel} roughness={0.4} />
-        </mesh>
-        {WEB_SCREENS.map((s, i) =>
-          "contain" in s ? (
-            <group key={s.src} visible={i === active}>
-              <mesh position={[0, 1.1, 0.003]}>
-                <planeGeometry args={[SCREEN_W, SCREEN_H]} />
-                <meshBasicMaterial color="#090a12" toneMapped={false} />
-              </mesh>
-              <mesh position={[0, 1.1, 0.004]}>
-                <planeGeometry args={[SCREEN_W, SCREEN_W / (s.w / s.h)]} />
-                <meshBasicMaterial map={textures[i]} toneMapped={false} />
-              </mesh>
-            </group>
-          ) : (
-            <mesh key={s.src} position={[0, 1.1, 0.004]} visible={i === active}>
-              <planeGeometry args={[SCREEN_W, SCREEN_H]} />
-              <meshBasicMaterial map={textures[i]} toneMapped={false} />
-            </mesh>
-          )
-        )}
-      </group>
-    </group>
-  );
-}
-
-function Phone({ palette }: { palette: Palette }) {
-  const tex = useLoader(THREE.TextureLoader, textureUrl(PHONE_SCREEN.src, 640));
-  useMemo(() => {
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.needsUpdate = true;
-  }, [tex]);
-  const imgW = 0.78;
-  const imgH = imgW / (PHONE_SCREEN.w / PHONE_SCREEN.h);
-
-  return (
-    <group>
-      <RoundedBox args={[0.98, 2.0, 0.1]} radius={0.12} smoothness={6}>
-        <meshStandardMaterial color={palette.body} metalness={0.7} roughness={0.3} />
-      </RoundedBox>
-      {/* Splash screen: the e-learning app's own artwork on white */}
-      <mesh position={[0, 0, 0.051]}>
-        <planeGeometry args={[0.88, 1.9]} />
-        <meshBasicMaterial color="#ffffff" toneMapped={false} />
-      </mesh>
-      <mesh position={[0, 0.05, 0.052]}>
-        <planeGeometry args={[imgW, imgH]} />
-        <meshBasicMaterial map={tex} transparent toneMapped={false} />
-      </mesh>
-      <mesh position={[0, 0.86, 0.053]}>
-        <planeGeometry args={[0.26, 0.07]} />
-        <meshBasicMaterial color="#0b0d0c" toneMapped={false} />
-      </mesh>
-    </group>
-  );
-}
-
-/** The site's "H" mark from app/icon.svg, extruded into a glossy block. */
-function LogoMark({ still, dark }: { still: boolean; dark: boolean }) {
-  const ref = useRef<THREE.Group>(null);
-
-  const { block, letter } = useMemo(() => {
-    // icon.svg works in a 64-unit box with y pointing down; centre it and flip y.
-    const u = (x: number, y: number) => new THREE.Vector2((x - 32) / 32, (32 - y) / 32);
-
-    const r = 15 / 32;
-    const box = new THREE.Shape();
-    box.moveTo(-1 + r, -1);
-    box.lineTo(1 - r, -1);
-    box.quadraticCurveTo(1, -1, 1, -1 + r);
-    box.lineTo(1, 1 - r);
-    box.quadraticCurveTo(1, 1, 1 - r, 1);
-    box.lineTo(-1 + r, 1);
-    box.quadraticCurveTo(-1, 1, -1, 1 - r);
-    box.lineTo(-1, -1 + r);
-    box.quadraticCurveTo(-1, -1, -1 + r, -1);
-
-    const h = new THREE.Shape([
-      u(20, 15), u(27.5, 15), u(27.5, 28.2), u(36.5, 28.2), u(36.5, 15), u(44, 15),
-      u(44, 49), u(36.5, 49), u(36.5, 35.4), u(27.5, 35.4), u(27.5, 49), u(20, 49),
-    ]);
-
-    const block = new THREE.ExtrudeGeometry(box, {
-      depth: 0.42, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.06, bevelSegments: 8, curveSegments: 24,
-    });
-    block.center();
-    const letter = new THREE.ExtrudeGeometry(h, {
-      depth: 0.14, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.02, bevelSegments: 4,
-    });
-    letter.center();
-    return { block, letter };
-  }, []);
-
-  useFrame((state, delta) => {
-    if (!ref.current || still) return;
-    // Swing rather than spin, so the letter is never seen edge-on or backwards.
-    const target = Math.sin(state.clock.elapsedTime * 0.5) * 0.45;
-    ref.current.rotation.y = THREE.MathUtils.damp(ref.current.rotation.y, target, 2, delta);
-  });
-
-  return (
-    <group ref={ref}>
-      <mesh geometry={block}>
-        <meshPhysicalMaterial
-          color={dark ? "#22c55e" : "#16a34a"}
-          roughness={0.22}
-          metalness={0.15}
-          clearcoat={1}
-          clearcoatRoughness={0.12}
-        />
-      </mesh>
-      <mesh geometry={letter} position={[0, 0, 0.3]}>
-        <meshStandardMaterial color="#ffffff" roughness={0.3} metalness={0.05} />
-      </mesh>
-    </group>
-  );
-}
-
-/* Leans the whole stage toward the cursor. Listens on window because the
+/* Leans the whole group toward the cursor. Listens on window because the
    canvas ignores pointer events so it never blocks scrolling. */
 function Rig({ children, still }: { children: ReactNode; still: boolean }) {
   const group = useRef<THREE.Group>(null);
@@ -251,107 +38,151 @@ function Rig({ children, still }: { children: ReactNode; still: boolean }) {
   useFrame((_, delta) => {
     if (!group.current || still) return;
     const g = group.current;
-    g.rotation.y = THREE.MathUtils.damp(g.rotation.y, pointer.current.x * 0.22, 2.5, delta);
-    g.rotation.x = THREE.MathUtils.damp(g.rotation.x, pointer.current.y * 0.08, 2.5, delta);
+    g.rotation.y = THREE.MathUtils.damp(g.rotation.y, pointer.current.x * 0.35, 2.5, delta);
+    g.rotation.x = THREE.MathUtils.damp(g.rotation.x, pointer.current.y * 0.2, 2.5, delta);
   });
 
   return <group ref={group}>{children}</group>;
 }
 
-/** The disc the logo floats over, with a lit rim so it reads as the centrepiece. */
-function Platform({ palette }: { palette: Palette }) {
-  return (
-    <group position={[0, PLATFORM_Y, 0]}>
-      <mesh>
-        <cylinderGeometry args={[1.55, 1.65, 0.16, 96]} />
-        <meshStandardMaterial color={palette.body} metalness={0.75} roughness={0.28} />
-      </mesh>
-      <mesh position={[0, 0.081, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[1.42, 1.5, 96]} />
-        <meshBasicMaterial color={palette.accent} toneMapped={false} />
-      </mesh>
-      <mesh position={[0, -0.07, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[2.1, 2.13, 128]} />
-        <meshBasicMaterial color={palette.accent} transparent opacity={0.35} toneMapped={false} />
-      </mesh>
-    </group>
-  );
-}
-
-/** One tilted ring around the logo with a marker travelling along it. */
-function Orbit({ palette, still }: { palette: Palette; still: boolean }) {
-  const dot = useRef<THREE.Mesh>(null);
-  const R = 2.05;
-  useFrame((state) => {
-    if (!dot.current) return;
-    const t = still ? 1.2 : state.clock.elapsedTime * 0.45;
-    dot.current.position.set(Math.cos(t) * R, 0, Math.sin(t) * R);
+/** The centrepiece: a slow-turning knot with a clearcoat and a thin-film sheen. */
+function Knot({ palette, still }: { palette: Palette; still: boolean }) {
+  const ref = useRef<THREE.Mesh>(null);
+  useFrame((_, delta) => {
+    if (!ref.current || still) return;
+    ref.current.rotation.x += delta * 0.12;
+    ref.current.rotation.y += delta * 0.18;
   });
   return (
-    <group position={[0, -0.2, 0]} rotation={[1.32, 0, 0.18]}>
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[R, 0.007, 8, 160]} />
-        <meshBasicMaterial color={palette.accent} transparent opacity={0.45} toneMapped={false} />
-      </mesh>
-      <mesh ref={dot}>
-        <sphereGeometry args={[0.05, 20, 20]} />
-        <meshBasicMaterial color={palette.accent} toneMapped={false} />
-      </mesh>
-    </group>
+    <mesh ref={ref} rotation={[0.4, 0.2, 0]} scale={0.82}>
+      <torusKnotGeometry args={[1.05, 0.34, 320, 48, 2, 3]} />
+      <meshPhysicalMaterial
+        color={palette.accent}
+        roughness={0.18}
+        metalness={0.25}
+        clearcoat={1}
+        clearcoatRoughness={0.08}
+        iridescence={0.7}
+        iridescenceIOR={1.4}
+        iridescenceThicknessRange={[200, 600]}
+      />
+    </mesh>
   );
 }
 
-/** Pulls the devices in on narrow (phone-shaped) canvases so they stay in frame. */
-function useSpread() {
-  const { size } = useThree();
-  return THREE.MathUtils.clamp(size.width / size.height / 0.9, 0.62, 1.15);
-}
-
-function Scene({ active, still, dark }: { active: number; still: boolean; dark: boolean }) {
-  const palette: Palette = dark
-    ? { body: "#2c322f", deck: "#1b201e", bezel: "#0b0d0c", accent: "#4ade80" }
-    : { body: "#c9ccc6", deck: "#9da19b", bezel: "#0f1211", accent: "#15803d" };
-  const spread = useSpread();
+/** Smaller pieces drifting around the knot, each its own shape and finish. */
+function Satellites({ palette, still, spread }: { palette: Palette; still: boolean; spread: number }) {
+  const pieces: { pos: [number, number, number]; speed: number; node: ReactNode }[] = [
+    {
+      pos: [-2.1 * spread, 1.3, -0.6],
+      speed: 1.4,
+      node: (
+        <mesh>
+          <icosahedronGeometry args={[0.42, 0]} />
+          <meshPhysicalMaterial color={palette.ink} roughness={0.3} metalness={0.6} clearcoat={1} flatShading />
+        </mesh>
+      ),
+    },
+    {
+      pos: [2.0 * spread, 1.05, -0.3],
+      speed: 1.8,
+      node: (
+        <mesh>
+          <sphereGeometry args={[0.32, 48, 48]} />
+          <meshPhysicalMaterial color={palette.pale} roughness={0.12} metalness={0.05} clearcoat={1} />
+        </mesh>
+      ),
+    },
+    {
+      pos: [2.15 * spread, -1.15, 0.4],
+      speed: 1.2,
+      node: (
+        <RoundedBox args={[0.62, 0.62, 0.62]} radius={0.12} smoothness={5} rotation={[0.5, 0.6, 0.2]}>
+          <meshPhysicalMaterial color={palette.accentDeep} roughness={0.25} metalness={0.3} clearcoat={1} />
+        </RoundedBox>
+      ),
+    },
+    {
+      pos: [-1.9 * spread, -1.2, 0.5],
+      speed: 1.6,
+      node: (
+        <mesh rotation={[1.1, 0.3, 0]}>
+          <torusGeometry args={[0.36, 0.13, 32, 64]} />
+          <meshPhysicalMaterial color={palette.accent} roughness={0.15} metalness={0.4} clearcoat={1} iridescence={0.6} />
+        </mesh>
+      ),
+    },
+    {
+      pos: [0.35 * spread, 1.95, -1.4],
+      speed: 2.0,
+      node: (
+        <mesh rotation={[0.3, 0, 0.8]}>
+          <capsuleGeometry args={[0.13, 0.5, 8, 24]} />
+          <meshPhysicalMaterial color={palette.pale} roughness={0.2} metalness={0.1} clearcoat={1} />
+        </mesh>
+      ),
+    },
+    {
+      pos: [-0.5 * spread, -1.85, 1.0],
+      speed: 1.7,
+      node: (
+        <mesh>
+          <sphereGeometry args={[0.16, 32, 32]} />
+          <meshPhysicalMaterial color={palette.accent} roughness={0.1} metalness={0.2} clearcoat={1} />
+        </mesh>
+      ),
+    },
+  ];
 
   return (
     <>
-      <ambientLight intensity={dark ? 0.35 : 0.65} />
-      <directionalLight position={[4, 6, 5]} intensity={dark ? 1.4 : 1.8} />
-      <pointLight position={[0, -1.2, 1.5]} intensity={dark ? 6 : 3} color={palette.accent} />
-
-      <Environment resolution={256}>
-        <Lightformer form="rect" intensity={2} position={[0, 4, 3]} scale={[8, 2, 1]} />
-        <Lightformer form="rect" intensity={1} position={[-5, 1, 0]} rotation-y={Math.PI / 2} scale={[6, 2, 1]} />
-        <Lightformer form="rect" intensity={1.5} color={palette.accent} position={[5, 1, -2]} rotation-y={-Math.PI / 2} scale={[4, 1, 1]} />
-      </Environment>
-
-      <Rig still={still}>
-        <Platform palette={palette} />
-        <Orbit palette={palette} still={still} />
-
-        <Float enabled={!still} speed={1.3} rotationIntensity={0.15} floatIntensity={0.5}>
-          <group position={[0, -0.35, 0.5]} scale={0.95}>
-            <LogoMark still={still} dark={dark} />
-          </group>
+      {pieces.map((p, i) => (
+        <Float key={i} enabled={!still} speed={p.speed} rotationIntensity={1.2} floatIntensity={1.4}>
+          <group position={p.pos}>{p.node}</group>
         </Float>
-        <Float enabled={!still} speed={1.1} rotationIntensity={0.12} floatIntensity={0.4}>
-          <group position={[-1.05 * spread, 1.15, -1.9]} rotation={[0.12, 0.5, 0]} scale={0.56}>
-            <Laptop active={active} palette={palette} still={still} />
-          </group>
-        </Float>
-        <Float enabled={!still} speed={1.5} rotationIntensity={0.25} floatIntensity={0.6}>
-          <group position={[1.6 * spread, 0.35, -0.4]} rotation={[0.04, -0.5, 0.06]} scale={0.6}>
-            <Phone palette={palette} />
-          </group>
-        </Float>
-      </Rig>
-
-      <ContactShadows position={[0, PLATFORM_Y + 0.09, 0]} opacity={dark ? 0.55 : 0.3} scale={5} blur={2.4} far={3} />
+      ))}
     </>
   );
 }
 
-export default function Hero3D({ active }: { active: number }) {
+/** Pulls the side pieces in on narrow (phone-shaped) canvases so they stay in frame. */
+function useSpread() {
+  const { size } = useThree();
+  return THREE.MathUtils.clamp(size.width / size.height, 0.62, 1.1);
+}
+
+function Scene({ still, dark }: { still: boolean; dark: boolean }) {
+  const palette: Palette = dark
+    ? { accent: "#4ade80", accentDeep: "#15803d", ink: "#1f2522", pale: "#eef1ec" }
+    : { accent: "#22c55e", accentDeep: "#166534", ink: "#1b1f1d", pale: "#ffffff" };
+  const spread = useSpread();
+
+  return (
+    <>
+      <ambientLight intensity={dark ? 0.3 : 0.6} />
+      <directionalLight position={[3, 5, 4]} intensity={dark ? 1.6 : 2} />
+      <pointLight position={[-3, -2, 3]} intensity={dark ? 10 : 5} color={palette.accent} />
+
+      <Environment resolution={256}>
+        <Lightformer form="rect" intensity={2.5} position={[0, 4, 4]} scale={[10, 2, 1]} />
+        <Lightformer form="rect" intensity={1.2} position={[-5, 0, 1]} rotation-y={Math.PI / 2} scale={[8, 3, 1]} />
+        <Lightformer form="ring" intensity={2} color={palette.accent} position={[4, 1, -2]} rotation-y={-Math.PI / 2} scale={3} />
+        <Lightformer form="rect" intensity={0.8} color="#a5f3fc" position={[0, -4, 2]} rotation-x={Math.PI / 2} scale={[6, 2, 1]} />
+      </Environment>
+
+      <Rig still={still}>
+        <Float enabled={!still} speed={1} rotationIntensity={0.3} floatIntensity={0.6}>
+          <Knot palette={palette} still={still} />
+        </Float>
+        <Satellites palette={palette} still={still} spread={spread} />
+      </Rig>
+
+      <ContactShadows position={[0, -2.4, 0]} opacity={dark ? 0.5 : 0.25} scale={8} blur={3} far={4} />
+    </>
+  );
+}
+
+export default function Hero3D() {
   const { theme } = useTheme();
   const still = usePrefersReducedMotion();
   const wrapper = useRef<HTMLDivElement>(null);
@@ -368,7 +199,7 @@ export default function Hero3D({ active }: { active: number }) {
   return (
     <div ref={wrapper} className="absolute inset-0">
       <Canvas
-        camera={{ position: [0, 0, 7], fov: 38 }}
+        camera={{ position: [0, 0, 7.2], fov: 40 }}
         dpr={[1, 1.75]}
         frameloop={still ? "demand" : visible ? "always" : "never"}
         gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
@@ -376,7 +207,7 @@ export default function Hero3D({ active }: { active: number }) {
         style={{ pointerEvents: "none" }}
       >
         <Suspense fallback={null}>
-          <Scene active={active} still={still} dark={theme === "dark"} />
+          <Scene still={still} dark={theme === "dark"} />
         </Suspense>
       </Canvas>
     </div>
