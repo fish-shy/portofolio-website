@@ -5,9 +5,9 @@ import TiltCard from "./TiltCard";
 import { siteConfig } from "../lib/site";
 
 const facts = [
-  { term: "Work", detail: `Full-stack developer, ${siteConfig.employer}` },
-  { term: "Freelance", detail: "Flutter apps for clients" },
-  { term: "Study", detail: `Computer Science, ${siteConfig.university}` },
+  { term: "Study", detail: `Computer Science, ${siteConfig.university} (GPA 3.71 / 4.00)` },
+  { term: "Most recent role", detail: "Freelance Software Engineer, PT. Ruang Algo Multimatics" },
+  { term: "Latest result", detail: "1st place, Kavinya Digital Innovation Competition 2026" },
   { term: "Based in", detail: `${siteConfig.address.locality}, ${siteConfig.address.region}` },
 ];
 

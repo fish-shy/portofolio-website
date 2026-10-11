@@ -22,7 +22,7 @@ type Project = {
 const featured: Project[] = [
   {
     title: "CreativeChain",
-    context: "Digital art marketplace on Solana",
+    context: "Finalist Top 80, DIGDAYA Hackathon 2026",
     description:
       "A marketplace where Indonesian artists mint, buy, and sell their work on-chain. Authenticity is checked with AI, and artwork is stored permanently on Arweave.",
     image: "/assets/images/creativechain.png",

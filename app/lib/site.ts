@@ -32,7 +32,6 @@ export const siteConfig = {
   description:
     "Hafiz Nazwa Nugraha is a Software Engineer in Banjarmasin, Indonesia, building web and mobile applications with Next.js, Nuxt.js, Flutter, and Node.js.",
   university: "Universitas Lambung Mangkurat",
-  employer: "RuangAlgo.com",
   email: "HafizNugraha1311@gmail.com",
   phone: "+62-811-5100-900",
   address: {
