@@ -53,7 +53,7 @@ export default function About() {
           {facts.map((fact, i) => (
             <li key={fact.label}>
               <MotionWrapper delay={i * 0.05} className="h-full rounded-[24px] bg-tile p-6">
-                <p className="font-display text-[44px] font-semibold leading-none tracking-[-0.04em] text-ink">
+                <p className="font-display text-[44px] font-semibold leading-none tracking-[-0.03em] text-ink">
                   {fact.figure}
                 </p>
                 <p className="mt-3 text-[15px] leading-snug text-muted">{fact.label}</p>
