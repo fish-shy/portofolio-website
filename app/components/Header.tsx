@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 
 const navigationLinks = [
-  { label: "About", href: "#about" },
-  { label: "Stack", href: "#skills" },
   { label: "Work", href: "#projects" },
+  { label: "About", href: "#about" },
   { label: "Experience", href: "#experience" },
+  { label: "Stack", href: "#skills" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -21,15 +21,15 @@ function ThemeToggle() {
       type="button"
       onClick={toggleTheme}
       aria-label={mounted ? `Switch to ${nextTheme} theme` : "Toggle theme"}
-      className="w-11 h-11 inline-flex items-center justify-center rounded-md text-muted hover:text-ink border border-line hover:border-field-line transition-colors"
+      className="press w-11 h-11 -mr-2 inline-flex items-center justify-center rounded-full text-muted hover:text-ink"
     >
       {mounted && theme === "dark" ? (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden="true">
+        <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="4" />
           <path strokeLinecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
         </svg>
       ) : (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden="true">
+        <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M20.35 15.35A9 9 0 0 1 8.65 3.65 9 9 0 1 0 20.35 15.35z" />
         </svg>
       )}
@@ -38,21 +38,23 @@ function ThemeToggle() {
 }
 
 export default function Header() {
+  const reduce = useReducedMotion();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
-    const ids = navigationLinks.map((link) => link.href.slice(1)).reverse();
+    const ids = navigationLinks.map((link) => link.href.slice(1));
     const handleScroll = () => {
-      setScrolled(window.scrollY > 24);
-      const current = ids.find((id) => {
+      setScrolled(window.scrollY > 8);
+      // The section whose top has passed under the bar is the current one.
+      let current = "";
+      for (const id of ids) {
         const el = document.getElementById(id);
-        return el ? el.getBoundingClientRect().top <= 120 : false;
-      });
-      setActiveSection(current ?? "");
+        if (el && el.getBoundingClientRect().top <= 96) current = id;
+      }
+      setActiveSection(current);
     };
-
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -67,26 +69,18 @@ export default function Header() {
     return () => window.removeEventListener("keydown", onKey);
   }, [isMenuOpen]);
 
+  const solid = scrolled || isMenuOpen;
+
   return (
-    <header
-      className="fixed top-0 inset-x-0 z-50 px-3 sm:px-4 pt-3"
-    >
-      {/* The bar is the page's one frosted surface: content scrolls underneath it. */}
-      <nav
-        aria-label="Main"
-        className={`max-w-6xl mx-auto rounded-2xl border transition-[background-color,border-color,box-shadow] duration-300 ${
-          scrolled || isMenuOpen
-            ? "bg-paper/80 backdrop-blur-md border-line shadow-[0_10px_30px_-20px_rgba(0,0,0,0.4)]"
-            : "bg-transparent border-transparent"
-        }`}
-      >
-        <div className="h-14 px-3 sm:px-4 flex items-center justify-between gap-6">
-          <a href="#home" className="font-display text-lg font-semibold tracking-[-0.02em] text-ink">
+    <header className="fixed inset-x-0 top-0 z-50">
+      <div className={`transition-colors duration-300 ${solid ? "material" : "bg-transparent"}`}>
+        <nav aria-label="Main" className="mx-auto flex h-12 max-w-5xl items-center justify-between gap-6 px-5 sm:px-6">
+          <a href="#home" className="text-[15px] font-semibold tracking-[-0.01em] text-ink">
             Hafiz Nazwa
             <span className="sr-only"> (back to top)</span>
           </a>
 
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-1">
             {navigationLinks.map((link) => {
               const active = activeSection === link.href.slice(1);
               return (
@@ -94,58 +88,62 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   aria-current={active ? "true" : undefined}
-                  className={`px-3 py-2 text-[0.95rem] rounded-md transition-colors ${
-                    active ? "text-ink font-medium" : "text-muted hover:text-ink"
-                  }`}
+                  className={`px-3 py-2 text-[13px] transition-colors ${active ? "text-ink" : "text-muted hover:text-ink"}`}
                 >
                   {link.label}
                 </a>
               );
             })}
-            <span className="w-px h-6 bg-line mx-3" aria-hidden="true" />
             <ThemeToggle />
           </div>
 
-          <div className="flex lg:hidden items-center gap-2">
+          <div className="flex md:hidden items-center gap-1">
             <ThemeToggle />
             <button
               type="button"
               onClick={() => setIsMenuOpen((open) => !open)}
               aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
-              className="h-11 px-4 inline-flex items-center rounded-md border border-line hover:border-field-line text-sm font-medium text-ink transition-colors"
+              className="press -mr-2 h-11 px-3 text-[15px] font-medium text-ink"
             >
               {isMenuOpen ? "Close" : "Menu"}
             </button>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </div>
+
+      {/* Scroll edge: a soft fade where content meets the bar, instead of a hard divider. */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none h-3 bg-gradient-to-b from-[var(--chrome)] to-transparent transition-opacity duration-300 ${
+          scrolled && !isMenuOpen ? "opacity-100" : "opacity-0"
+        }`}
+      />
 
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
             id="mobile-menu"
-            initial={{ opacity: 0, y: -8 }}
+            className="material absolute inset-x-0 top-12 md:hidden"
+            style={{ transformOrigin: "top" }}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-            className="lg:hidden max-w-6xl mx-auto mt-2 rounded-2xl bg-paper border border-line shadow-[0_10px_30px_-20px_rgba(0,0,0,0.4)]"
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}
+            transition={reduce ? { duration: 0.15 } : { type: "spring", bounce: 0, duration: 0.35 }}
           >
-            <div className="px-4">
-              <ul className="py-2">
-                {navigationLinks.map((link) => (
-                  <li key={link.href} className="border-b border-line last:border-b-0">
-                    <a
-                      href={link.href}
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center min-h-12 font-display text-xl font-medium text-ink"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <ul className="mx-auto max-w-5xl px-5 pb-6 pt-2">
+              {navigationLinks.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex min-h-12 items-center text-[28px] font-semibold tracking-[-0.02em] text-ink"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </motion.div>
         )}
       </AnimatePresence>

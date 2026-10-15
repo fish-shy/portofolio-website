@@ -1,41 +1,41 @@
 # Design direction
 
-Taken from the site's existing identity (green accent, Sora for the name, light and dark themes). Edit this file to change the direction; the antislop skills read it before any UI work.
+The owner asked for a full revamp, modern and sleek, guided by the apple-design skill (`.claude/skills/apple-design`). Edit this file to change direction; the antislop and apple-design skills read it before UI work.
 
-Reading this as: a personal portfolio for clients and recruiters hiring a web and mobile engineer, in a polished studio style with real 3D product shots. Dial: ENERGY 3 / RHYTHM 3 / MOTION 3.
+Reading this as: a personal portfolio for clients and recruiters hiring a web and mobile engineer, in the calm, product-page language of Apple's own sites. Dial: ENERGY 2 / RHYTHM 2 / MOTION 2.
 
 ## Identity
 
 - Personality: plain-spoken, practical, confident about real work rather than claims.
-- Motif: every section opens with a hairline rule and a numbered label (`01 / About`), and lists use the same hairline rows. It reads like a printed CV or catalogue.
-- Motif: your real work shown on physical objects. The hero is an abstract 3D sculpture, the stack is a 3D sphere of the actual tools, and Work screenshots sit in browser frames that stand up in 3D as you scroll.
-- Focal point per screen: the name in the hero, the screenshot in each featured project, the email address in Contact.
+- Motif: the product-page tile. Every section is a centred accent label, a large tightly tracked title, and content set in soft rounded tiles on a near-white (or true black) page.
+- Focal point per screen: the name in the hero, each project tile's title and screenshot, the email button in Contact.
 
 ## Palette
 
 | Token | Light | Dark | Why |
 |---|---|---|---|
-| paper | `#f7f7f2` | `#0e1311` | Warm off-white and a green-tinted near-black, so the page is not sterile white or generic grey |
-| ink | `#15171a` | `#eef1ec` | Body and headings, 16:1 or better |
-| muted | `#585e66` | `#9ba49e` | Secondary text, at least 6:1 |
-| accent | `#15803d` | `#4ade80` | The owner's green, used only on the surname, the primary button, section numbers, and outbound links |
+| paper | `#fbfbfd` | `#000000` | Apple's off-white page and true black, so tiles read as lifted surfaces |
+| tile | `#f5f5f7` | `#161617` | The rounded content tiles |
+| ink | `#1d1d1f` | `#f5f5f7` | Body and headings, 16:1 or better |
+| muted | `#6e6e73` | `#a1a1a6` | Secondary text, at least 4.6:1 on every surface |
+| accent | `#1a7f37` | `#30d158` | The owner's green, on the section labels, primary buttons and links |
 
 Every text pairing was checked with `.claude/skills/antislop-human/contrast-check.py`.
 
 ## Type
 
-- Sora (display): the name and headings. Geometric with a slightly wide stance, already the site's wordmark face.
-- Geist (body): neutral and legible at small sizes, so the personality stays in the headings.
-- Geist Mono: only for numbers and dates (section indexes, experience periods), where fixed-width digits line up.
+- The platform system font everywhere (SF Pro on Apple devices, Segoe UI on Windows, Roboto on Android), as the apple-design skill recommends: it ships optical sizing and tracking tables, and loads nothing.
+- Tracking scales with size: the hero name at -0.045em, section titles at -0.03em, body at 0. Leading is tight on display sizes (0.98 to 1.05) and relaxed on body copy.
 
 ## Decisions
 
-- Owner asked for more 3D and a more professional finish. The hero sculpture is pure identity (owner's direction); the other 3D pieces carry real content: project screenshots and the actual skill list.
-- Hero: no photo (owner's call; the portrait lives in About). The owner asked for abstract shapes that look cool rather than a literal object, so the stage is a glossy green torus knot with a thin-film sheen, ringed by six smaller pieces in different shapes and finishes (faceted icosahedron, pearl sphere, rounded cube, torus, capsule). Everything floats, the group leans toward the cursor, and the knot turns slowly. On phones the stage comes first so the 3D is on the first screen. Canvas edges fade out, rendering stops off screen, and reduced motion holds everything still.
-- Stack: CSS 3D sphere, so labels stay sharp text. The grouped cards beside it carry the same list for screen readers and scanning.
-- Work: four featured projects (CreativeChain first, SmartCal last) in browser frames whose address bar shows the real host, or says there is none. Smaller projects are cards in a two-column grid.
-- Surfaces: 16px radius cards on a surface colour with a hairline border. Shadow only on things that are lifted in 3D (screens, portrait, the floating header).
-- Glass: only the floating header, because content scrolls under it.
-- Motion: name and intro rise in once on load; sections fade up once; cards tilt toward a mouse cursor. Reduced motion turns all of it off.
-- The `↗` arrow appears only on links that leave the site.
-- Experience mirrors the CV (public/cv): work, achievements, and training, each row with organisation and role on the left, place and dates on the right, a heavy rule under each block heading. A Download CV button sits beside it.
+- Hero: centred, Apple product-page layout. Accent headline label, the name as the display title, one sentence, a filled pill button and a text link. Below it, one 3D object: an iridescent, slowly morphing green form with a thin metal ring, lit asymmetrically. It leans toward the cursor and settles back and smaller as the hero scrolls away. Rendering stops off screen; reduced motion holds it still.
+- Work: CreativeChain as a full-width tile, then a two-column grid of the other featured projects. Each tile has the context label, title, description, stack and link on top, and the screenshot rising from the bottom edge, growing from 90% to full size as it scrolls into view. The smaller projects sit in a horizontal rail that scrolls natively with snap, with previous/next buttons for mouse users.
+- About: rounded portrait beside three short paragraphs, then four figure tiles. Every figure comes from the CV or this page.
+- Experience: the CV content in grouped tiles (work, achievements, training) with a Download CV link.
+- Stack: four tiles; filled chips are the first-choice tools.
+- Contact: a large email pill, three channel tiles, and the mailto form in its own tile.
+- Header: a translucent material bar (`backdrop-filter`) with content scrolling under it and a soft scroll-edge fade instead of a divider. It turns solid under `prefers-reduced-transparency`. The phone menu drops from the bar.
+- Motion: critically damped springs (bounce 0) everywhere; nothing overshoots. Buttons and tiles respond on press (`scale(0.97)`). Reduced motion swaps every rise for a short cross-fade.
+- Radius: 28px on large tiles, 24px on small ones, pills only on buttons and chips.
+- The `↗` arrow appears only on links that leave the site; `›` marks in-page text links, as on Apple's pages.

@@ -11,3 +11,6 @@ Only an explicit choice of antislop during or after selects a session mode. A re
 If the mode is unresolved, ask during/after and end the response; wait for the answer before any UI review, planning, or concept. For read-only tasks, put the active-mode notice only at the start of the final answer, never in progress messages. For editing tasks, announce before the first edit and omit it from the final answer.
 To update antislop later: copy the `skills/` folders from https://github.com/miqdadbadjuber/anti-slop into `.claude/skills/`, or run `npx antislop-ai --update`.
 <!-- antislop:end -->
+
+## apple-design
+For interaction, motion, materials and typography work, also read `.claude/skills/apple-design/SKILL.md` (from emilkowalski/skills, MIT).

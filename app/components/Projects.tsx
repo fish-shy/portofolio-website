@@ -1,8 +1,10 @@
+"use client";
+
 import Image from "next/image";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import MotionWrapper from "./MotionWrapper";
-import SectionHeader from "./SectionHeader";
-import ScrollScreen from "./ScrollScreen";
-import TiltCard from "./TiltCard";
+import SectionIntro from "./SectionIntro";
 
 type Project = {
   title: string;
@@ -17,8 +19,8 @@ type Project = {
   aspect?: string;
 };
 
-// Projects with a real screenshot get the large treatment; the rest have only
-// a logo, so they sit in the card grid below.
+// Projects with a real screenshot get a large tile; the rest have only a logo,
+// so they sit in the swipeable rail below.
 const featured: Project[] = [
   {
     title: "CreativeChain",
@@ -99,127 +101,160 @@ function ProjectLink({ project }: { project: Project }) {
         href={project.link}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 min-h-11 font-semibold text-accent underline decoration-1 underline-offset-4 hover:decoration-2"
+        className="press inline-flex min-h-11 items-center text-[17px] font-medium text-accent hover:underline underline-offset-4"
       >
         Visit {project.title}
         {/* The arrow marks the only links that leave this site. */}
-        <span aria-hidden="true">↗</span>
-        <span className="sr-only">(opens in a new tab)</span>
+        <span aria-hidden="true" className="ml-1">
+          &#8599;
+        </span>
+        <span className="sr-only"> (opens in a new tab)</span>
       </a>
     );
   }
   return (
-    <p className="inline-flex items-center min-h-11 text-sm text-muted">
+    <p className="inline-flex min-h-11 items-center text-[15px] text-muted">
       {project.isPrivate ? "Private project, no public link" : "Client project, no public link"}
     </p>
   );
 }
 
-function addressFor(project: Project) {
-  if (project.link) return new URL(project.link).host;
-  return project.isPrivate ? "Private deployment, no public URL" : "Client project, no public URL";
+/** A screenshot that grows from 92% to full size as it scrolls up into view. */
+function Shot({ project, wide }: { project: Project; wide: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
+  const scale = useTransform(scrollYProgress, [0, 1], [reduce ? 1 : 0.9, 1]);
+  const y = useTransform(scrollYProgress, [0, 1], [reduce ? 0 : 40, 0]);
+
+  return (
+    <div ref={ref} className="mt-10 px-6 md:px-10">
+      <motion.div
+        style={{ scale, y, aspectRatio: project.aspect ?? "16 / 10" }}
+        className={`relative mx-auto overflow-hidden rounded-t-2xl border border-b-0 border-line bg-surface shadow-[0_-10px_40px_-20px_rgba(0,0,0,0.25)] ${
+          wide ? "max-w-4xl" : "max-w-xl"
+        }`}
+      >
+        <Image
+          src={project.image}
+          alt={`Screenshot of ${project.title}`}
+          fill
+          sizes={wide ? "(max-width: 1024px) 100vw, 56rem" : "(max-width: 768px) 100vw, 36rem"}
+          className="object-cover object-top"
+        />
+      </motion.div>
+    </div>
+  );
 }
 
-function TechList({ items }: { items: string[] }) {
+function FeatureTile({ project, wide }: { project: Project; wide: boolean }) {
   return (
-    <ul className="flex flex-wrap gap-1.5">
-      {items.map((t) => (
-        <li key={t} className="rounded-md border border-line px-2 py-1 text-xs font-medium text-ink">
-          {t}
-        </li>
-      ))}
-    </ul>
+    <article className="flex h-full flex-col overflow-hidden rounded-[28px] bg-tile pt-12 md:pt-14">
+      <div className="px-6 text-center md:px-10">
+        {project.context && <p className="text-[15px] font-semibold text-accent">{project.context}</p>}
+        <h3
+          className={`mt-2 font-display font-semibold tracking-[-0.03em] leading-[1.05] text-ink ${
+            wide ? "text-[clamp(2rem,5vw,3.5rem)]" : "text-[clamp(1.75rem,3.4vw,2.5rem)]"
+          }`}
+        >
+          {project.title}
+        </h3>
+        <p className={`mx-auto mt-4 text-[17px] leading-relaxed text-muted ${wide ? "max-w-2xl" : "max-w-md"}`}>
+          {project.description}
+        </p>
+        <p className="mt-3 text-[13px] text-muted">{project.technologies.join(" · ")}</p>
+        <div className="mt-2">
+          <ProjectLink project={project} />
+        </div>
+      </div>
+      <div className="mt-auto">
+        <Shot project={project} wide={wide} />
+      </div>
+    </article>
+  );
+}
+
+function MoreRail() {
+  const rail = useRef<HTMLUListElement>(null);
+  const scrollByCard = (dir: 1 | -1) => {
+    const el = rail.current;
+    if (!el) return;
+    const card = el.querySelector("li");
+    const step = card ? card.getBoundingClientRect().width + 16 : el.clientWidth * 0.8;
+    el.scrollBy({ left: dir * step, behavior: "smooth" });
+  };
+
+  return (
+    <div className="mt-24 md:mt-32">
+      <MotionWrapper className="mx-auto flex max-w-5xl items-end justify-between gap-6 px-5 sm:px-6">
+        <h3 className="font-display text-[clamp(1.6rem,3.4vw,2.5rem)] font-semibold tracking-[-0.03em] text-ink">
+          More projects.
+        </h3>
+        <div className="hidden gap-2 sm:flex">
+          {([-1, 1] as const).map((dir) => (
+            <button
+              key={dir}
+              type="button"
+              onClick={() => scrollByCard(dir)}
+              aria-label={dir === -1 ? "Previous projects" : "Next projects"}
+              className="press inline-flex h-11 w-11 items-center justify-center rounded-full bg-tile text-ink hover:bg-line"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d={dir === -1 ? "M15 18l-6-6 6-6" : "M9 6l6 6-6 6"} />
+              </svg>
+            </button>
+          ))}
+        </div>
+      </MotionWrapper>
+
+      <ul
+        ref={rail}
+        className="rail mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-5 px-5 pb-4 sm:scroll-px-6 sm:px-6 lg:px-[max(1.5rem,calc((100vw-64rem)/2+1.5rem))] lg:scroll-px-[max(1.5rem,calc((100vw-64rem)/2+1.5rem))]"
+      >
+        {more.map((project) => (
+          <li key={project.title} className="w-[82vw] max-w-[22rem] shrink-0 snap-start">
+            <article className="flex h-full flex-col overflow-hidden rounded-[24px] bg-tile">
+              <div className="relative m-3 h-44 overflow-hidden rounded-2xl bg-white">
+                <Image src={project.image} alt={`${project.title} preview`} fill sizes="22rem" className="object-contain p-6" />
+              </div>
+              <div className="flex flex-1 flex-col px-6 pb-5 pt-3">
+                <h4 className="text-[21px] font-semibold tracking-[-0.02em] text-ink">{project.title}</h4>
+                <p className="mt-2 text-[15px] leading-relaxed text-muted">{project.description}</p>
+                <p className="mt-3 text-[13px] text-muted">{project.technologies.join(" · ")}</p>
+                <div className="mt-auto pt-2">
+                  <ProjectLink project={project} />
+                </div>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
 export default function Projects() {
   return (
-    <section id="projects" aria-labelledby="projects-heading" className="px-4 sm:px-6 py-20 md:py-28">
-      <div className="max-w-6xl mx-auto">
-        <MotionWrapper>
-          <SectionHeader id="projects-heading" index="03" label="Selected work">
-            Seven projects across web, mobile, and data, from hackathon
-            builds to client sites.
-          </SectionHeader>
-        </MotionWrapper>
+    <section id="projects" aria-labelledby="projects-heading" className="py-24 md:py-36">
+      <div className="mx-auto max-w-5xl px-5 sm:px-6">
+        <SectionIntro
+          id="projects-heading"
+          eyebrow="Work"
+          lede="Seven projects across web, mobile, and data, from hackathon builds to client sites."
+        >
+          Things I&apos;ve built.
+        </SectionIntro>
 
-        <ol className="space-y-20 md:space-y-32">
-          {featured.map((project, index) => (
-            <li key={project.title} className="grid gap-8 md:gap-12 lg:grid-cols-12 lg:items-center">
-              <div className={`lg:col-span-7 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
-                <ScrollScreen
-                  src={project.image}
-                  alt={`Screenshot of ${project.title}`}
-                  address={addressFor(project)}
-                  side={index % 2 === 1 ? "right" : "left"}
-                  aspect={project.aspect}
-                />
-              </div>
-
-              <MotionWrapper className={`lg:col-span-5 ${index % 2 === 1 ? "lg:order-1" : ""}`}>
-                <p className="text-sm text-muted">
-                  <span className="font-mono text-accent">{String(index + 1).padStart(2, "0")}</span>
-                  {project.context && (
-                    <>
-                      <span className="mx-2" aria-hidden="true">/</span>
-                      {project.context}
-                    </>
-                  )}
-                </p>
-                <h3 className="mt-3 font-display text-[clamp(1.6rem,3.2vw,2.5rem)] font-semibold tracking-[-0.03em] leading-tight text-ink">
-                  {project.title}
-                </h3>
-                <p className="mt-4 leading-relaxed text-muted">{project.description}</p>
-                <div className="mt-5">
-                  <TechList items={project.technologies} />
-                </div>
-                <div className="mt-4">
-                  <ProjectLink project={project} />
-                </div>
-              </MotionWrapper>
-            </li>
+        <div className="grid gap-5 md:grid-cols-2">
+          {featured.map((project, i) => (
+            <MotionWrapper key={project.title} className={`h-full ${i === 0 ? "md:col-span-2" : ""}`}>
+              <FeatureTile project={project} wide={i === 0} />
+            </MotionWrapper>
           ))}
-        </ol>
-
-        <div className="mt-24 md:mt-32">
-          <MotionWrapper>
-            <h3 className="font-display text-2xl font-semibold tracking-[-0.02em] text-ink mb-8">
-              More projects
-            </h3>
-          </MotionWrapper>
-          <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {more.map((project, i) => (
-              <li key={project.title}>
-                <MotionWrapper delay={(i % 3) * 0.08} className="h-full">
-                  <TiltCard className="h-full">
-                    <article className="h-full flex flex-col rounded-2xl border border-line bg-surface overflow-hidden">
-                      <div className="relative h-40 bg-white border-b border-line">
-                        <Image
-                          src={project.image}
-                          alt={`${project.title} preview`}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 32rem"
-                          className="object-contain p-5"
-                        />
-                      </div>
-                      <div className="flex flex-1 flex-col p-6">
-                        <h4 className="font-display text-lg font-semibold tracking-[-0.02em] text-ink">{project.title}</h4>
-                        <p className="mt-2 text-muted leading-relaxed">{project.description}</p>
-                        <div className="mt-4">
-                          <TechList items={project.technologies} />
-                        </div>
-                        <div className="mt-auto pt-3">
-                          <ProjectLink project={project} />
-                        </div>
-                      </div>
-                    </article>
-                  </TiltCard>
-                </MotionWrapper>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
+
+      <MoreRail />
     </section>
   );
 }

@@ -22,92 +22,60 @@ export default function Hero() {
   const reduce = useReducedMotion();
 
   // Always keep an animate target: the server renders the initial state, and
-  // reduced motion only collapses the duration so the content still shows.
+  // reduced motion swaps the rise for a short cross-fade.
   const rise = (delay: number) => ({
-    initial: { opacity: 0, y: 28 },
+    initial: { opacity: 0, y: reduce ? 0 : 24 },
     animate: { opacity: 1, y: 0 },
-    transition: reduce
-      ? { duration: 0 }
-      : { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] as const },
+    transition: reduce ? { duration: 0.2 } : { type: "spring" as const, bounce: 0, duration: 0.9, delay },
   });
 
   return (
-    <section
-      id="home"
-      aria-labelledby="hero-heading"
-      className="relative overflow-hidden px-4 sm:px-6 pt-20 pb-14 lg:py-0"
-    >
-      <div className="relative mx-auto grid w-full max-w-6xl items-center gap-6 lg:min-h-[100dvh] lg:grid-cols-12 lg:gap-4">
-        {/* Stage: abstract 3D shapes. Comes first on phones so the 3D is on the first screen. */}
-        <div className="relative lg:order-2 lg:col-span-7">
-          <div className="relative mx-auto h-[min(56svh,26rem)] w-full max-w-[34rem] sm:h-[34rem] lg:h-[min(46rem,90dvh)] lg:max-w-none">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute left-1/2 top-[18%] h-[70%] w-[90%] -translate-x-1/2 rounded-full bg-accent/15 blur-[90px]"
-            />
-            {/* Fade the canvas edges so shapes drifting out of frame dissolve instead of clipping. */}
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 -mx-4 sm:mx-0"
-              style={{
-                maskImage:
-                  "linear-gradient(to bottom, black 78%, transparent 100%), linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
-                WebkitMaskImage:
-                  "linear-gradient(to bottom, black 78%, transparent 100%), linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
-                maskComposite: "intersect",
-                WebkitMaskComposite: "source-in",
-              }}
-            >
-              <WebGLBoundary>
-                <Hero3D />
-              </WebGLBoundary>
-            </div>
-          </div>
-        </div>
-
-        <div className="relative z-10 lg:order-1 lg:col-span-5 lg:py-32">
-          <h1
-            id="hero-heading"
-            className="font-display font-semibold tracking-[-0.045em] leading-[0.95] text-[clamp(2.9rem,7vw,5.25rem)]"
+    <section id="home" aria-labelledby="hero-heading" className="relative overflow-hidden px-5 sm:px-6 pt-28 md:pt-36">
+      <div className="mx-auto max-w-5xl text-center">
+        <motion.p {...rise(0)} className="text-lg md:text-xl font-semibold text-accent">
+          {siteConfig.headline}
+        </motion.p>
+        <motion.h1
+          {...rise(0.06)}
+          id="hero-heading"
+          className="mt-3 font-display font-bold tracking-[-0.045em] leading-[0.98] text-[clamp(3rem,10vw,7.5rem)] text-balance text-ink"
+        >
+          Hafiz Nazwa Nugraha.
+        </motion.h1>
+        <motion.p
+          {...rise(0.14)}
+          className="mx-auto mt-6 max-w-2xl text-xl md:text-2xl leading-snug tracking-[-0.01em] text-muted text-balance"
+        >
+          I build web and mobile apps end to end, from the database schema to the screen people tap.
+        </motion.p>
+        <motion.div {...rise(0.22)} className="mt-9 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+          <a
+            href="#projects"
+            className="press inline-flex min-h-12 items-center rounded-full bg-accent px-7 text-[17px] font-medium text-on-accent hover:opacity-90"
           >
-            <motion.span className="block" {...rise(0.08)}>
-              Hafiz Nazwa
-            </motion.span>
-            <motion.span className="block text-accent" {...rise(0.16)}>
-              Nugraha
-            </motion.span>
-          </h1>
+            See my work
+          </a>
+          <a href={`mailto:${siteConfig.email}`} className="press inline-flex min-h-12 items-center text-[17px] font-medium text-accent hover:underline underline-offset-4">
+            Email me
+            <span aria-hidden="true" className="ml-1">
+              &rsaquo;
+            </span>
+          </a>
+        </motion.div>
+      </div>
 
-          <motion.p {...rise(0.24)} className="mt-6 font-display text-xl md:text-2xl font-medium tracking-[-0.02em] text-ink">
-            {siteConfig.headline}
-          </motion.p>
-
-          <motion.p {...rise(0.3)} className="mt-4 max-w-md text-base md:text-lg leading-relaxed text-muted">
-            I build web and mobile apps end to end, from the database schema to
-            the screen people tap. Computer Science student at{" "}
-            {siteConfig.university}, based in {siteConfig.address.locality},
-            Indonesia.
-          </motion.p>
-
-          <motion.div {...rise(0.36)} className="mt-9 flex flex-col sm:flex-row gap-3">
-            <a
-              href="#projects"
-              className="inline-flex items-center justify-center min-h-12 px-6 rounded-xl bg-ink text-paper font-semibold hover:opacity-90 transition-opacity"
-            >
-              See my work
-            </a>
-            <a
-              href={`mailto:${siteConfig.email}`}
-              className="inline-flex items-center justify-center min-h-12 px-6 rounded-xl border border-field-line text-ink font-semibold hover:bg-surface transition-colors"
-            >
-              Email me
-            </a>
-          </motion.div>
-
-          <motion.p {...rise(0.42)} className="mt-8 text-sm text-muted">
-            Open to freelance and full-time work.
-          </motion.p>
-        </div>
+      <div aria-hidden="true" className="relative mx-auto mt-4 h-[22rem] max-w-5xl sm:h-[30rem] md:h-[36rem]">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--accent)_22%,transparent),transparent)]" />
+        <motion.div
+          className="absolute inset-0"
+          initial={{ opacity: 0, scale: reduce ? 1 : 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={reduce ? { duration: 0.3 } : { type: "spring", bounce: 0, duration: 1.4, delay: 0.25 }}
+        >
+          <WebGLBoundary>
+            <Hero3D />
+          </WebGLBoundary>
+        </motion.div>
       </div>
     </section>
   );

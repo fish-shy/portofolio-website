@@ -10,12 +10,12 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="px-4 sm:px-6 pb-10">
-      <div className="max-w-6xl mx-auto border-t border-line pt-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <p className="text-sm text-muted">
+    <footer className="bg-tile px-5 sm:px-6">
+      <div className="mx-auto flex max-w-5xl flex-col gap-4 py-8 text-[12px] md:flex-row md:items-center md:justify-between">
+        <p className="text-muted">
           © {currentYear} {siteConfig.name}. Built with Next.js.
         </p>
-        <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+        <ul className="flex flex-wrap items-center gap-x-5 gap-y-1">
           {links.map((link) => {
             const external = link.href.startsWith("http");
             return (
@@ -24,7 +24,7 @@ export default function Footer() {
                   href={link.href}
                   target={external ? "_blank" : undefined}
                   rel={external ? "me noopener noreferrer" : undefined}
-                  className="inline-flex items-center min-h-11 text-ink hover:text-accent transition-colors"
+                  className="inline-flex min-h-11 items-center text-muted hover:text-ink transition-colors"
                 >
                   {link.label}
                   {external && <span className="sr-only"> (opens in a new tab)</span>}
@@ -33,7 +33,7 @@ export default function Footer() {
             );
           })}
           <li>
-            <a href="#home" className="inline-flex items-center min-h-11 text-ink hover:text-accent transition-colors">
+            <a href="#home" className="inline-flex min-h-11 items-center text-muted hover:text-ink transition-colors">
               Back to top
             </a>
           </li>

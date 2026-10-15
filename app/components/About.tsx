@@ -1,71 +1,66 @@
 import Image from "next/image";
 import MotionWrapper from "./MotionWrapper";
-import SectionHeader from "./SectionHeader";
-import TiltCard from "./TiltCard";
+import SectionIntro from "./SectionIntro";
 import { siteConfig } from "../lib/site";
 
+// Every figure comes from the CV or from the Work section on this page.
 const facts = [
-  { term: "Study", detail: `Computer Science, ${siteConfig.university} (GPA 3.71 / 4.00)` },
-  { term: "Most recent role", detail: "Freelance Software Engineer, PT. Ruang Algo Multimatics" },
-  { term: "Latest result", detail: "1st place, Kavinya Digital Innovation Competition 2026" },
-  { term: "Based in", detail: `${siteConfig.address.locality}, ${siteConfig.address.region}` },
+  { figure: "3.71", label: "GPA out of 4.00, Computer Science at Lambung Mangkurat University" },
+  { figure: "1st", label: "Place at the Kavinya Digital Innovation Competition, June 2026" },
+  { figure: "4", label: "Competition results: two podiums and two finalist spots" },
+  { figure: "7", label: "Projects shown on this page, across web, mobile, and data" },
 ];
 
 export default function About() {
   return (
-    <section id="about" aria-labelledby="about-heading" className="px-4 sm:px-6 py-20 md:py-28">
-      <div className="max-w-6xl mx-auto">
-        <MotionWrapper>
-          <SectionHeader id="about-heading" index="01" label="About">
-            I turn complex requirements into software people actually enjoy
-            using.
-          </SectionHeader>
-        </MotionWrapper>
+    <section id="about" aria-labelledby="about-heading" className="px-5 sm:px-6 py-24 md:py-36">
+      <div className="mx-auto max-w-5xl">
+        <SectionIntro id="about-heading" eyebrow="About">
+          Requirements in, working software out.
+        </SectionIntro>
 
-        <div className="grid gap-10 lg:gap-16 md:grid-cols-12 md:items-center">
-          <MotionWrapper className="md:col-span-5">
-            <div className="relative mx-auto max-w-[19rem] sm:max-w-[22rem] pr-3 pb-3 sm:pr-0 sm:pb-0" style={{ perspective: 1200 }}>
-              {/* Offset plate behind the photo gives the tilt a visible back layer. */}
-              <div aria-hidden="true" className="absolute left-0 top-0 right-3 bottom-3 sm:right-0 sm:bottom-0 translate-x-3 translate-y-3 sm:translate-x-4 sm:translate-y-4 rounded-2xl border border-accent/60" />
-              <TiltCard intensity={10}>
-                <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-surface shadow-[0_30px_60px_-30px_rgba(0,0,0,0.5)]">
-                  <Image
-                    src="/assets/images/hafiz.jpg"
-                    alt="Portrait of Hafiz Nazwa Nugraha"
-                    fill
-                    sizes="(max-width: 768px) 22rem, 26rem"
-                    className="object-cover object-top"
-                  />
-                </div>
-              </TiltCard>
+        <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
+          <MotionWrapper>
+            <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[28px] bg-tile">
+              <Image
+                src="/assets/images/hafiz.jpg"
+                alt="Portrait of Hafiz Nazwa Nugraha"
+                fill
+                sizes="(max-width: 768px) 24rem, 28rem"
+                className="object-cover object-top"
+              />
             </div>
           </MotionWrapper>
 
-          <MotionWrapper delay={0.1} className="md:col-span-7">
-            <div className="space-y-5 text-lg leading-relaxed text-muted">
-              <p>
-                I&apos;m a Computer Science student at{" "}
-                <span className="text-ink font-medium">{siteConfig.university}</span>{" "}
-                with hands-on experience shipping web and mobile applications
-                for real clients.
-              </p>
-              <p>
-                Most of my time goes into backend architecture, databases, and
-                responsive interfaces. Outside client work I study machine
-                learning and build side projects to keep learning.
-              </p>
-            </div>
-
-            <dl className="mt-10 grid gap-3 sm:grid-cols-2">
-              {facts.map((fact) => (
-                <div key={fact.term} className="rounded-2xl border border-line bg-surface px-5 py-4">
-                  <dt className="text-sm text-muted">{fact.term}</dt>
-                  <dd className="mt-1 font-medium text-ink">{fact.detail}</dd>
-                </div>
-              ))}
-            </dl>
+          <MotionWrapper delay={0.08} className="space-y-5 text-[19px] leading-relaxed text-muted">
+            <p>
+              I&apos;m a Computer Science student at{" "}
+              <span className="font-medium text-ink">{siteConfig.university}</span>, focused on backend
+              engineering, system architecture, and data science.
+            </p>
+            <p>
+              I&apos;ve shipped web and mobile apps for real clients and built the server side of several
+              competition entries. Lately I&apos;ve been going deeper into machine learning and predictive
+              modeling.
+            </p>
+            <p>
+              Based in {siteConfig.address.locality}, {siteConfig.address.region}.
+            </p>
           </MotionWrapper>
         </div>
+
+        <ul className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {facts.map((fact, i) => (
+            <li key={fact.label}>
+              <MotionWrapper delay={i * 0.05} className="h-full rounded-[24px] bg-tile p-6">
+                <p className="font-display text-[44px] font-semibold leading-none tracking-[-0.04em] text-ink">
+                  {fact.figure}
+                </p>
+                <p className="mt-3 text-[15px] leading-snug text-muted">{fact.label}</p>
+              </MotionWrapper>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
