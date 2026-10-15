@@ -40,7 +40,7 @@ export default function Hero() {
           id="hero-heading"
           className="mt-3 font-display font-bold tracking-[-0.045em] leading-[0.98] text-[clamp(3rem,10vw,7.5rem)] text-balance text-ink"
         >
-          Hafiz Nazwa Nugraha.
+          Hafiz Nazwa Nugraha<span className="text-accent">.</span>
         </motion.h1>
         <motion.p
           {...rise(0.14)}

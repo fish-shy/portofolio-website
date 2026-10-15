@@ -57,11 +57,11 @@ function Scene({ still, dark }: { still: boolean; dark: boolean }) {
       <ambientLight intensity={dark ? 0.25 : 0.55} />
       <directionalLight position={[3, 5, 4]} intensity={dark ? 1.4 : 1.8} />
 
-      {/* Asymmetric light: one broad key overhead, a cool fill low left, a green rim behind right. */}
+      {/* Asymmetric light: one broad key overhead, a cool fill low left, a cool white rim behind right. */}
       <Environment resolution={256}>
         <Lightformer form="circle" intensity={2.6} position={[-1.5, 5, 2]} scale={6} />
         <Lightformer form="rect" intensity={0.9} color="#64d2ff" position={[-6, -2, 1]} rotation-y={Math.PI / 2.4} scale={[10, 3, 1]} />
-        <Lightformer form="ring" intensity={3} color="#30d158" position={[4, 2, -4]} scale={4} />
+        <Lightformer form="ring" intensity={3} color="#e8f2ff" position={[4, 2, -4]} scale={4} />
         <Lightformer form="rect" intensity={0.6} position={[0, 0, 8]} scale={[4, 10, 1]} />
       </Environment>
 
@@ -72,7 +72,7 @@ function Scene({ still, dark }: { still: boolean; dark: boolean }) {
             <MeshDistortMaterial
               distort={still ? 0.3 : 0.38}
               speed={still ? 0 : 1.1}
-              color={dark ? "#1f7a3c" : "#24a148"}
+              color={dark ? "#1a6fe0" : "#0a6cff"}
               roughness={0.12}
               metalness={0.2}
               clearcoat={1}

@@ -7,6 +7,7 @@ Reading this as: a personal portfolio for clients and recruiters hiring a web an
 ## Identity
 
 - Personality: plain-spoken, practical, confident about real work rather than claims.
+- Mark: a lowercase "h" in white on a near-black rounded square, with a blue dot as its full stop. The same dot closes the "Hafiz." wordmark in the header and the name in the hero.
 - Motif: the product-page tile. Every section is a centred accent label, a large tightly tracked title, and content set in soft rounded tiles on a near-white (or true black) page.
 - Focal point per screen: the name in the hero, each project tile's title and screenshot, the email button in Contact.
 
@@ -18,7 +19,7 @@ Reading this as: a personal portfolio for clients and recruiters hiring a web an
 | tile | `#f5f5f7` | `#161617` | The rounded content tiles |
 | ink | `#1d1d1f` | `#f5f5f7` | Body and headings, 16:1 or better |
 | muted | `#6e6e73` | `#a1a1a6` | Secondary text, at least 4.6:1 on every surface |
-| accent | `#1a7f37` | `#30d158` | The owner's green, on the section labels, primary buttons and links |
+| accent | `#0066cc` | `#2997ff` | Blue, chosen by the owner in place of the old green; on the section labels, primary buttons, links and the dot in the mark |
 
 Every text pairing was checked with `.claude/skills/antislop-human/contrast-check.py`.
 
@@ -29,7 +30,7 @@ Every text pairing was checked with `.claude/skills/antislop-human/contrast-chec
 
 ## Decisions
 
-- Hero: centred, Apple product-page layout. Accent headline label, the name as the display title, one sentence, a filled pill button and a text link. Below it, one 3D object: an iridescent, slowly morphing green form with a thin metal ring, lit asymmetrically. It leans toward the cursor and settles back and smaller as the hero scrolls away. Rendering stops off screen; reduced motion holds it still.
+- Hero: centred, Apple product-page layout. Accent headline label, the name as the display title, one sentence, a filled pill button and a text link. Below it, one 3D object: an iridescent, slowly morphing blue form with a thin metal ring, lit asymmetrically. It leans toward the cursor and settles back and smaller as the hero scrolls away. Rendering stops off screen; reduced motion holds it still.
 - Work: CreativeChain as a full-width tile, then a two-column grid of the other featured projects. Each tile has the context label, title, description, stack and link on top, and the screenshot rising from the bottom edge, growing from 90% to full size as it scrolls into view. The smaller projects sit in a horizontal rail that scrolls natively with snap, with previous/next buttons for mouse users.
 - About: rounded portrait beside three short paragraphs, then four figure tiles. Every figure comes from the CV or this page.
 - Experience: the CV content in grouped tiles (work, achievements, training) with a Download CV link.

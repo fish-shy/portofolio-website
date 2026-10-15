@@ -75,9 +75,10 @@ export default function Header() {
     <header className="fixed inset-x-0 top-0 z-50">
       <div className={`transition-colors duration-300 ${solid ? "material" : "bg-transparent"}`}>
         <nav aria-label="Main" className="mx-auto flex h-12 max-w-5xl items-center justify-between gap-6 px-5 sm:px-6">
-          <a href="#home" className="text-[15px] font-semibold tracking-[-0.01em] text-ink">
-            Hafiz Nazwa
-            <span className="sr-only"> (back to top)</span>
+          {/* Wordmark: the name plus the blue dot from the logo mark. */}
+          <a href="#home" className="press -ml-1 inline-flex min-h-11 items-center px-1 text-[21px] font-bold tracking-[-0.035em] text-ink">
+            Hafiz<span className="text-accent">.</span>
+            <span className="sr-only"> Back to top</span>
           </a>
 
           <div className="hidden md:flex items-center gap-1">
