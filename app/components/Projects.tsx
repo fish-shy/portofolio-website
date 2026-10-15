@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import MotionWrapper from "./MotionWrapper";
 import SectionIntro from "./SectionIntro";
 
@@ -15,12 +13,12 @@ type Project = {
   /** Public URL, or null when the work cannot be linked. */
   link: string | null;
   isPrivate: boolean;
-  /** Screenshot aspect ratio when it is not the default 16 / 10. */
-  aspect?: string;
+  /** Width / height of the visible part of the screenshot. */
+  aspect: string;
 };
 
-// Projects with a real screenshot get a large tile; the rest have only a logo,
-// so they sit in the swipeable rail below.
+// Projects with a real screenshot get a full-width row; the rest only have a
+// logo, so they get smaller cards below.
 const featured: Project[] = [
   {
     title: "CreativeChain",
@@ -42,6 +40,8 @@ const featured: Project[] = [
     technologies: ["Next.js", "Prisma", "OpenRouter", "Tailwind CSS"],
     link: null,
     isPrivate: true,
+    // The bottom of this capture is empty page, so it is trimmed from the top down.
+    aspect: "2559 / 1000",
   },
   {
     title: "CLINICALgo",
@@ -51,6 +51,7 @@ const featured: Project[] = [
     technologies: ["Web application", "QA testing", "Clinic management"],
     link: null,
     isPrivate: true,
+    aspect: "2540 / 1306",
   },
   {
     title: "SmartCal",
@@ -61,10 +62,11 @@ const featured: Project[] = [
     technologies: ["TensorFlow", "Computer vision", "Streamlit", "React", "Express", "Tailwind CSS"],
     link: "https://fe-smartcal-656502826232.asia-southeast2.run.app/",
     isPrivate: false,
+    aspect: "2550 / 1432",
   },
 ];
 
-const more: Project[] = [
+const more: Omit<Project, "aspect">[] = [
   {
     title: "E-learning mobile app",
     description:
@@ -94,7 +96,7 @@ const more: Project[] = [
   },
 ];
 
-function ProjectLink({ project }: { project: Project }) {
+function ProjectLink({ project }: { project: Pick<Project, "title" | "link" | "isPrivate"> }) {
   if (project.link) {
     return (
       <a
@@ -119,111 +121,83 @@ function ProjectLink({ project }: { project: Project }) {
   );
 }
 
-/** A screenshot that grows from 92% to full size as it scrolls up into view. */
-function Shot({ project, wide }: { project: Project; wide: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
-  const scale = useTransform(scrollYProgress, [0, 1], [reduce ? 1 : 0.9, 1]);
-  const y = useTransform(scrollYProgress, [0, 1], [reduce ? 0 : 40, 0]);
-
+function Stack({ items }: { items: string[] }) {
   return (
-    <div ref={ref} className="mt-10 px-6 md:px-10">
-      <motion.div
-        style={{ scale, y, aspectRatio: project.aspect ?? "16 / 10" }}
-        className={`relative mx-auto overflow-hidden rounded-t-2xl border border-b-0 border-line bg-surface shadow-[0_-10px_40px_-20px_rgba(0,0,0,0.25)] ${
-          wide ? "max-w-4xl" : "max-w-xl"
-        }`}
-      >
-        <Image
-          src={project.image}
-          alt={`Screenshot of ${project.title}`}
-          fill
-          sizes={wide ? "(max-width: 1024px) 100vw, 56rem" : "(max-width: 768px) 100vw, 36rem"}
-          className="object-cover object-top"
-        />
-      </motion.div>
-    </div>
+    <ul aria-label="Built with" className="flex flex-wrap gap-2">
+      {items.map((item) => (
+        <li key={item} className="rounded-full border border-line px-3 py-1 text-[13px] text-muted">
+          {item}
+        </li>
+      ))}
+    </ul>
   );
 }
 
-function FeatureTile({ project, wide }: { project: Project; wide: boolean }) {
+/** One project per row: copy on one side, the whole screenshot on the other, alternating. */
+function FeatureRow({ project, flip }: { project: Project; flip: boolean }) {
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[28px] bg-tile pt-12 md:pt-14">
-      <div className="px-6 text-center md:px-10">
+    <article
+      className={`group grid items-center gap-8 rounded-[28px] bg-tile p-6 sm:p-8 lg:gap-12 lg:p-12 ${
+        flip ? "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]" : "lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]"
+      }`}
+    >
+      <div className={flip ? "lg:order-2" : ""}>
         {project.context && <p className="text-[15px] font-semibold text-accent">{project.context}</p>}
-        <h3
-          className={`mt-2 font-display font-semibold tracking-[-0.03em] leading-[1.05] text-ink ${
-            wide ? "text-[clamp(2rem,5vw,3.5rem)]" : "text-[clamp(1.75rem,3.4vw,2.5rem)]"
-          }`}
-        >
+        <h3 className="mt-2 font-display text-[clamp(1.75rem,3.6vw,2.5rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-balance text-ink">
           {project.title}
         </h3>
-        <p className={`mx-auto mt-4 text-[17px] leading-relaxed text-muted ${wide ? "max-w-2xl" : "max-w-md"}`}>
-          {project.description}
-        </p>
-        <p className="mt-3 text-[13px] text-muted">{project.technologies.join(" · ")}</p>
-        <div className="mt-2">
+        <p className="mt-4 text-[17px] leading-relaxed text-muted">{project.description}</p>
+        <div className="mt-6">
+          <Stack items={project.technologies} />
+        </div>
+        <div className="mt-4">
           <ProjectLink project={project} />
         </div>
       </div>
-      <div className="mt-auto">
-        <Shot project={project} wide={wide} />
+
+      <div className={flip ? "lg:order-1" : ""}>
+        <div
+          style={{ aspectRatio: project.aspect }}
+          className="relative overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_24px_48px_-28px_rgba(0,0,0,0.35)]"
+        >
+          <Image
+            src={project.image}
+            alt={`Screenshot of ${project.title}`}
+            fill
+            sizes="(max-width: 1024px) 100vw, 36rem"
+            className="object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+          />
+        </div>
       </div>
     </article>
   );
 }
 
-function MoreRail() {
-  const rail = useRef<HTMLUListElement>(null);
-  const scrollByCard = (dir: 1 | -1) => {
-    const el = rail.current;
-    if (!el) return;
-    const card = el.querySelector("li");
-    const step = card ? card.getBoundingClientRect().width + 16 : el.clientWidth * 0.8;
-    el.scrollBy({ left: dir * step, behavior: "smooth" });
-  };
-
+function MoreProjects() {
   return (
-    <div className="mt-24 md:mt-32">
-      <MotionWrapper className="mx-auto flex max-w-5xl items-end justify-between gap-6 px-5 sm:px-6">
+    <div className="mt-20 md:mt-28">
+      <MotionWrapper className="mx-auto max-w-5xl px-5 sm:px-6">
         <h3 className="font-display text-[clamp(1.6rem,3.4vw,2.5rem)] font-semibold tracking-[-0.03em] text-ink">
           More projects.
         </h3>
-        <div className="hidden gap-2 sm:flex">
-          {([-1, 1] as const).map((dir) => (
-            <button
-              key={dir}
-              type="button"
-              onClick={() => scrollByCard(dir)}
-              aria-label={dir === -1 ? "Previous projects" : "Next projects"}
-              className="press inline-flex h-11 w-11 items-center justify-center rounded-full bg-tile text-ink hover:bg-line"
-            >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" d={dir === -1 ? "M15 18l-6-6 6-6" : "M9 6l6 6-6 6"} />
-              </svg>
-            </button>
-          ))}
-        </div>
       </MotionWrapper>
 
-      <ul
-        ref={rail}
-        className="rail mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-5 px-5 pb-4 sm:scroll-px-6 sm:px-6 lg:px-[max(1.5rem,calc((100vw-64rem)/2+1.5rem))] lg:scroll-px-[max(1.5rem,calc((100vw-64rem)/2+1.5rem))]"
-      >
+      {/* A swipeable rail on phones, a plain three-column grid once they fit. */}
+      <ul className="rail mx-auto mt-8 flex max-w-5xl snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-5 px-5 pb-4 sm:scroll-px-6 sm:px-6 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
         {more.map((project) => (
-          <li key={project.title} className="w-[82vw] max-w-[22rem] shrink-0 snap-start">
-            <article className="flex h-full flex-col overflow-hidden rounded-[24px] bg-tile">
-              <div className="relative m-3 h-44 overflow-hidden rounded-2xl bg-white">
-                <Image src={project.image} alt={`${project.title} preview`} fill sizes="22rem" className="object-contain p-6" />
+          <li key={project.title} className="w-[82vw] max-w-[22rem] shrink-0 snap-start md:w-auto md:max-w-none">
+            <article className="flex h-full flex-col rounded-[24px] bg-tile p-6">
+              {/* Logos are drawn for white, so they keep a white plate in dark mode too. */}
+              <div className="relative h-16 w-28 overflow-hidden rounded-xl bg-white">
+                <Image src={project.image} alt={`${project.title} logo`} fill sizes="7rem" className="object-contain p-2" />
               </div>
-              <div className="flex flex-1 flex-col px-6 pb-5 pt-3">
-                <h4 className="text-[21px] font-semibold tracking-[-0.02em] text-ink">{project.title}</h4>
-                <p className="mt-2 text-[15px] leading-relaxed text-muted">{project.description}</p>
-                <p className="mt-3 text-[13px] text-muted">{project.technologies.join(" · ")}</p>
-                <div className="mt-auto pt-2">
-                  <ProjectLink project={project} />
-                </div>
+              <h4 className="mt-6 text-[21px] font-semibold leading-snug tracking-[-0.02em] text-ink">{project.title}</h4>
+              <p className="mt-2 text-[15px] leading-relaxed text-muted">{project.description}</p>
+              <div className="mt-5">
+                <Stack items={project.technologies} />
+              </div>
+              <div className="mt-auto pt-3">
+                <ProjectLink project={project} />
               </div>
             </article>
           </li>
@@ -245,16 +219,16 @@ export default function Projects() {
           Things I&apos;ve built.
         </SectionIntro>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-5">
           {featured.map((project, i) => (
-            <MotionWrapper key={project.title} className={`h-full ${i === 0 ? "md:col-span-2" : ""}`}>
-              <FeatureTile project={project} wide={i === 0} />
+            <MotionWrapper key={project.title}>
+              <FeatureRow project={project} flip={i % 2 === 1} />
             </MotionWrapper>
           ))}
         </div>
       </div>
 
-      <MoreRail />
+      <MoreProjects />
     </section>
   );
 }
