@@ -41,9 +41,9 @@
   --color-accent: var(--accent);
   --color-on-accent: var(--on-accent);
   --color-chrome: var(--chrome);
-  /* The platform face ships optical sizing and tracking tables (SF Pro on Apple devices). */
-  --font-sans: system-ui, -apple-system, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  --font-display: system-ui, -apple-system, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  /* One family for everything, so it looks the same on Android and Windows as on a Mac. */
+  --font-sans: var(--font-jakarta), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-jakarta), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 

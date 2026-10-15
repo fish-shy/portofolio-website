@@ -25,8 +25,8 @@ Every text pairing was checked with `.claude/skills/antislop-human/contrast-chec
 
 ## Type
 
-- The platform system font everywhere (SF Pro on Apple devices, Segoe UI on Windows, Roboto on Android), as the apple-design skill recommends: it ships optical sizing and tracking tables, and loads nothing.
-- Tracking scales with size: the hero name at -0.045em, section titles at -0.03em, body at 0. Leading is tight on display sizes (0.98 to 1.05) and relaxed on body copy.
+- Plus Jakarta Sans everywhere, loaded with `next/font` (self-hosted, no layout shift). The owner found the system font stack bland, and on Android it fell back to Roboto. Jakarta was drawn by Tokotype for Jakarta's city identity: a modern grotesque from Indonesia with tight, geometric capitals, which suits an Indonesian engineer's site and reads well from 12px fine print up to the hero name. The Open Graph image uses the same face from `@fontsource/plus-jakarta-sans`.
+- Tracking scales with size: the hero name at -0.035em, section titles at -0.03em, body at 0. Leading is tight on display sizes (0.98 to 1.05) and relaxed on body copy.
 
 ## Decisions
 

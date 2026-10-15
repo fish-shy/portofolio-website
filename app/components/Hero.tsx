@@ -38,13 +38,13 @@ export default function Hero() {
         <motion.h1
           {...rise(0.06)}
           id="hero-heading"
-          className="mt-3 font-display font-bold tracking-[-0.045em] leading-[0.98] text-[clamp(3rem,10vw,7.5rem)] text-balance text-ink"
+          className="mt-3 font-display font-bold tracking-[-0.035em] leading-[0.98] text-[clamp(3rem,10vw,7.5rem)] text-balance text-ink"
         >
           Hafiz Nazwa Nugraha<span className="text-accent">.</span>
         </motion.h1>
         <motion.p
           {...rise(0.14)}
-          className="mx-auto mt-6 max-w-2xl text-xl md:text-2xl leading-snug tracking-[-0.01em] text-muted text-balance"
+          className="mx-auto mt-6 max-w-2xl text-xl md:text-2xl leading-snug text-muted text-balance"
         >
           I build web and mobile apps end to end, from the database schema to the screen people tap.
         </motion.p>

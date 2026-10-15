@@ -1,8 +1,17 @@
 import type { Metadata, Viewport } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./components/ThemeProvider";
 import StructuredData from "./components/StructuredData";
 import { siteConfig, siteUrl } from "./lib/site";
+
+// Plus Jakarta Sans was drawn by Tokotype for Jakarta's city identity: a sharp,
+// modern grotesque from Indonesia, for an Indonesian engineer's site.
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jakarta",
+});
 
 const pageTitle = `${siteConfig.name} | ${siteConfig.headline}`;
 
@@ -71,7 +80,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={jakarta.variable} suppressHydrationWarning>
       <head>
         {/* Apply saved theme before first paint to avoid a flash of the wrong theme */}
         <script
@@ -81,9 +90,7 @@ export default function RootLayout({
         />
         <StructuredData />
       </head>
-      <body
-        className="antialiased bg-paper text-ink"
-      >
+      <body className="antialiased bg-paper text-ink">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

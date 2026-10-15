@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { siteConfig, siteUrl } from "./lib/site";
 
@@ -6,7 +8,18 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 // Rendered at build time by Satori, so this stays plain flexbox + inline styles.
-export default function OpengraphImage() {
+// Satori reads .woff but not .woff2, so the site's face comes from the Fontsource files.
+const fontDir = join(process.cwd(), "node_modules/@fontsource/plus-jakarta-sans/files");
+const loadFont = (weight: 400 | 600 | 700) =>
+  readFile(join(fontDir, `plus-jakarta-sans-latin-${weight}-normal.woff`)).then((data) => ({
+    name: "Plus Jakarta Sans",
+    data,
+    weight,
+    style: "normal" as const,
+  }));
+
+export default async function OpengraphImage() {
+  const fonts = await Promise.all([loadFont(400), loadFont(600), loadFont(700)]);
   const domain = siteUrl.replace(/^https?:\/\//, "");
 
   return new ImageResponse(
@@ -21,6 +34,7 @@ export default function OpengraphImage() {
           padding: "80px",
           background: "#000000",
           color: "#f5f5f7",
+          fontFamily: "Plus Jakarta Sans",
           position: "relative",
         }}
       >
@@ -51,7 +65,7 @@ export default function OpengraphImage() {
           <circle cx="46.5" cy="45.5" r="4.5" fill="#2997ff" />
         </svg>
 
-        <div style={{ display: "flex", fontSize: 88, fontWeight: 700, lineHeight: 1.05, marginTop: 40, letterSpacing: -3 }}>
+        <div style={{ display: "flex", fontSize: 88, fontWeight: 700, lineHeight: 1.05, marginTop: 40, letterSpacing: -2.5 }}>
           {siteConfig.name}
           <span style={{ color: "#2997ff" }}>.</span>
         </div>
@@ -69,6 +83,6 @@ export default function OpengraphImage() {
         </div>
       </div>
     ),
-    size
+    { ...size, fonts }
   );
 }
