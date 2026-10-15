@@ -4,7 +4,7 @@ export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
 // iOS applies its own rounded mask, so this one is deliberately full-bleed
-// (no corner radius) unlike icon.svg.
+// (no corner radius) unlike icon.svg. Same "h" and dot as icon.svg.
 export default function AppleIcon() {
   return new ImageResponse(
     (
@@ -15,13 +15,19 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #4ade80 0%, #22c55e 55%, #15803d 100%)",
+          background: "#1d1d1f",
         }}
       >
-        {/* Same path as icon.svg — drawn rather than typeset, since Satori has
-            no bold face loaded and would render the letter too light. */}
         <svg width="180" height="180" viewBox="0 0 64 64">
-          <path d="M20 15h7.5v13.2h9V15H44v34h-7.5V35.4h-9V49H20z" fill="#ffffff" />
+          <path
+            d="M19.5 15v34M19.5 33c0-5 3.6-8.5 8.5-8.5s8.5 3.5 8.5 8.5v16"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle cx="46.5" cy="45.5" r="4.5" fill="#2997ff" />
         </svg>
       </div>
     ),

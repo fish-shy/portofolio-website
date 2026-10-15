@@ -1,11 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Hafiz Nazwa Nugraha">
-  <defs>
-    <linearGradient id="hn" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#4ade80" />
-      <stop offset="55%" stop-color="#22c55e" />
-      <stop offset="100%" stop-color="#15803d" />
-    </linearGradient>
-  </defs>
-  <rect width="64" height="64" rx="15" fill="url(#hn)" />
-  <path d="M20 15h7.5v13.2h9V15H44v34h-7.5V35.4h-9V49H20z" fill="#fff" />
+  <rect width="64" height="64" rx="15" fill="#1d1d1f" />
+  <path d="M19.5 15v34M19.5 33c0-5 3.6-8.5 8.5-8.5s8.5 3.5 8.5 8.5v16" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="46.5" cy="45.5" r="4.5" fill="#2997ff" />
 </svg>

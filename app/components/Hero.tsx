@@ -40,7 +40,7 @@ export default function Hero() {
           id="hero-heading"
           className="mt-3 font-display font-bold tracking-[-0.045em] leading-[0.98] text-[clamp(3rem,10vw,7.5rem)] text-balance text-ink"
         >
-          Hafiz Nazwa Nugraha.
+          Hafiz Nazwa Nugraha<span className="text-accent">.</span>
         </motion.h1>
         <motion.p
           {...rise(0.14)}
@@ -67,7 +67,12 @@ export default function Hero() {
       <div aria-hidden="true" className="relative mx-auto mt-4 h-[22rem] max-w-5xl sm:h-[30rem] md:h-[36rem]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--accent)_22%,transparent),transparent)]" />
         <motion.div
-          className="absolute inset-0"
+          className="absolute inset-0 -mx-5 sm:mx-0"
+          style={{
+            // Fade the side edges so the glow never ends on a hard line.
+            maskImage: "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+            WebkitMaskImage: "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+          }}
           initial={{ opacity: 0, scale: reduce ? 1 : 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={reduce ? { duration: 0.3 } : { type: "spring", bounce: 0, duration: 1.4, delay: 0.25 }}

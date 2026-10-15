@@ -2,7 +2,7 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Neutral system greys with one green accent. Every text pairing was checked
+/* Neutral system greys with one blue accent. Every text pairing was checked
    for WCAG AA with .claude/skills/antislop-human/contrast-check.py. */
 :root {
   --paper: #fbfbfd;
@@ -12,7 +12,7 @@
   --muted: #6e6e73;
   --line: #d2d2d7;
   --field-line: #86868b;
-  --accent: #1a7f37;
+  --accent: #0066cc;
   --on-accent: #ffffff;
   --chrome: rgba(251, 251, 253, 0.72);
 }
@@ -25,7 +25,7 @@
   --muted: #a1a1a6;
   --line: #2c2c2e;
   --field-line: #6e6e73;
-  --accent: #30d158;
+  --accent: #2997ff;
   --on-accent: #000000;
   --chrome: rgba(0, 0, 0, 0.66);
 }

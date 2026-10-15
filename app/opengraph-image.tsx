@@ -19,86 +19,52 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          background: "#0b1120",
-          color: "#ffffff",
+          background: "#000000",
+          color: "#f5f5f7",
           position: "relative",
         }}
       >
-        {/* Ambient green glow, matching the site's accent */}
+        {/* Soft blue light behind the mark, matching the site's accent */}
         <div
           style={{
             position: "absolute",
-            top: -180,
-            right: -140,
-            width: 620,
-            height: 620,
+            top: -200,
+            right: -160,
+            width: 680,
+            height: 680,
             borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(34,197,94,0.45) 0%, rgba(11,17,32,0) 70%)",
+            background: "radial-gradient(circle, rgba(41,151,255,0.35) 0%, rgba(0,0,0,0) 70%)",
             display: "flex",
           }}
         />
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 16,
-            fontSize: 26,
-            letterSpacing: 6,
-            textTransform: "uppercase",
-            color: "#4ade80",
-          }}
-        >
-          <div style={{ width: 56, height: 3, background: "#22c55e", display: "flex" }} />
-          Portfolio
-        </div>
+        <svg width="96" height="96" viewBox="0 0 64 64">
+          <rect width="64" height="64" rx="15" fill="#1d1d1f" />
+          <path
+            d="M19.5 15v34M19.5 33c0-5 3.6-8.5 8.5-8.5s8.5 3.5 8.5 8.5v16"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle cx="46.5" cy="45.5" r="4.5" fill="#2997ff" />
+        </svg>
 
-        <div
-          style={{
-            display: "flex",
-            fontSize: 88,
-            fontWeight: 700,
-            lineHeight: 1.1,
-            marginTop: 28,
-          }}
-        >
+        <div style={{ display: "flex", fontSize: 88, fontWeight: 700, lineHeight: 1.05, marginTop: 40, letterSpacing: -3 }}>
           {siteConfig.name}
+          <span style={{ color: "#2997ff" }}>.</span>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            fontSize: 44,
-            fontWeight: 600,
-            color: "#4ade80",
-            marginTop: 18,
-          }}
-        >
+        <div style={{ display: "flex", fontSize: 40, fontWeight: 600, color: "#2997ff", marginTop: 16 }}>
           {siteConfig.headline}
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            fontSize: 28,
-            color: "#94a3b8",
-            marginTop: 32,
-          }}
-        >
-          Next.js · Node.js · Banjarmasin, Indonesia
+        <div style={{ display: "flex", fontSize: 28, color: "#a1a1a6", marginTop: 28 }}>
+          Web and mobile apps, end to end. Banjarmasin, Indonesia.
         </div>
 
-        <div
-          style={{
-            position: "absolute",
-            bottom: 64,
-            left: 80,
-            display: "flex",
-            fontSize: 26,
-            color: "#64748b",
-          }}
-        >
+        <div style={{ position: "absolute", bottom: 64, left: 80, display: "flex", fontSize: 26, color: "#86868b" }}>
           {domain}
         </div>
       </div>
