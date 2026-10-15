@@ -2,48 +2,55 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Palette: one neutral paper/ink pair plus a single green accent. Every text
-   pairing here was checked against WCAG AA with the antislop contrast script. */
+/* Neutral system greys with one green accent. Every text pairing was checked
+   for WCAG AA with .claude/skills/antislop-human/contrast-check.py. */
 :root {
-  --paper: #f7f7f2;
+  --paper: #fbfbfd;
   --surface: #ffffff;
-  --ink: #15171a;
-  --muted: #585e66;
-  --line: #dcdcd3;
-  --field-line: #858b84;
-  --accent: #15803d;
+  --tile: #f5f5f7;
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --line: #d2d2d7;
+  --field-line: #86868b;
+  --accent: #1a7f37;
   --on-accent: #ffffff;
+  --chrome: rgba(251, 251, 253, 0.72);
 }
 
 .dark {
-  --paper: #0e1311;
-  --surface: #151b18;
-  --ink: #eef1ec;
-  --muted: #9ba49e;
-  --line: #26302b;
-  --field-line: #66726b;
-  --accent: #4ade80;
-  --on-accent: #0e1311;
+  --paper: #000000;
+  --surface: #1c1c1e;
+  --tile: #161617;
+  --ink: #f5f5f7;
+  --muted: #a1a1a6;
+  --line: #2c2c2e;
+  --field-line: #6e6e73;
+  --accent: #30d158;
+  --on-accent: #000000;
+  --chrome: rgba(0, 0, 0, 0.66);
 }
 
 @theme inline {
   --color-paper: var(--paper);
   --color-surface: var(--surface);
+  --color-tile: var(--tile);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-field-line: var(--field-line);
   --color-accent: var(--accent);
   --color-on-accent: var(--on-accent);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-sora);
+  --color-chrome: var(--chrome);
+  /* The platform face ships optical sizing and tracking tables (SF Pro on Apple devices). */
+  --font-sans: system-ui, -apple-system, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-display: system-ui, -apple-system, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
 html {
   scroll-behavior: smooth;
-  /* Keeps anchored section headings clear of the fixed header. */
-  scroll-padding-top: 5rem;
+  scroll-padding-top: 4.5rem;
+  -webkit-text-size-adjust: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -55,8 +62,11 @@ html {
 body {
   background: var(--paper);
   color: var(--ink);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans);
+  font-optical-sizing: auto;
   overflow-x: hidden;
+  /* Ease the switch between light and dark instead of flashing. */
+  transition: background-color 300ms ease, color 300ms ease;
 }
 
 ::selection {
@@ -67,5 +77,35 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 6px;
+}
+
+/* Feedback on press, not on release. */
+.press {
+  transition: transform 120ms ease-out, opacity 150ms ease, background-color 150ms ease;
+}
+.press:active {
+  transform: scale(0.97);
+}
+
+/* Translucent chrome; turns solid when the visitor asks for less transparency. */
+.material {
+  background: var(--chrome);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .material {
+    background: var(--paper);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Horizontal rails scroll natively with momentum and snap, without a visible bar. */
+.rail {
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar {
+  display: none;
 }

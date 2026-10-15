@@ -10,23 +10,19 @@ interface MotionWrapperProps {
 }
 
 /**
- * One short rise-in per block as it enters the viewport, so each section
- * arrives once instead of every element animating on its own.
+ * Each block rises in once as it enters the viewport on a critically damped
+ * spring (no overshoot). With reduced motion it only cross-fades.
  */
-export default function MotionWrapper({
-  children,
-  className = "",
-  delay = 0,
-}: MotionWrapperProps) {
+export default function MotionWrapper({ children, className = "", delay = 0 }: MotionWrapperProps) {
   const reduce = useReducedMotion();
 
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: reduce ? 0 : 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={reduce ? { duration: 0 } : { duration: 0.6, delay, ease: [0.25, 0.4, 0.25, 1] }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={reduce ? { duration: 0.2 } : { type: "spring", bounce: 0, duration: 0.8, delay }}
     >
       {children}
     </motion.div>

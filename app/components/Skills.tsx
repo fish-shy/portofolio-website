@@ -1,11 +1,10 @@
 import MotionWrapper from "./MotionWrapper";
-import SectionHeader from "./SectionHeader";
-import SkillGlobe from "./SkillGlobe";
+import SectionIntro from "./SectionIntro";
 
 type SkillGroup = {
   title: string;
   blurb: string;
-  /** What I reach for first; set darker on the globe and in the list. */
+  /** What I reach for first; shown as filled chips. */
   core: string[];
   /** Used on projects, but not the default pick. */
   rest: string[];
@@ -38,50 +37,40 @@ const skillGroups: SkillGroup[] = [
   },
 ];
 
-const globeItems = skillGroups.flatMap((g) => [
-  ...g.core.map((label) => ({ label, core: true })),
-  ...g.rest.map((label) => ({ label, core: false })),
-]);
-
 export default function Skills() {
   return (
-    <section id="skills" aria-labelledby="skills-heading" className="px-4 sm:px-6 py-20 md:py-28 overflow-x-clip">
-      <div className="max-w-6xl mx-auto">
-        <MotionWrapper>
-          <SectionHeader id="skills-heading" index="02" label="Stack">
-            The tools I reach for, grouped by the part of the product they build.
-          </SectionHeader>
-        </MotionWrapper>
+    <section id="skills" aria-labelledby="skills-heading" className="px-5 sm:px-6 py-24 md:py-36">
+      <div className="mx-auto max-w-5xl">
+        <SectionIntro
+          id="skills-heading"
+          eyebrow="Stack"
+          lede="Grouped by the part of the product they build. Filled ones are what I reach for first."
+        >
+          The tools I work with.
+        </SectionIntro>
 
-        <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
-          <MotionWrapper className="lg:col-span-6 max-w-[22rem] sm:max-w-[28rem] w-full mx-auto">
-            <SkillGlobe items={globeItems} />
-            <p className="mt-2 text-center text-xs text-muted hidden lg:block">Drag to spin.</p>
-          </MotionWrapper>
-
-          <ul className="lg:col-span-6 grid gap-4 sm:grid-cols-2">
-            {skillGroups.map((group, i) => (
-              <li key={group.title}>
-                <MotionWrapper delay={i * 0.06} className="h-full rounded-2xl border border-line bg-surface p-5">
-                  <h3 className="font-display text-lg font-semibold tracking-[-0.02em] text-ink">{group.title}</h3>
-                  <p className="mt-1 text-sm text-muted">{group.blurb}</p>
-                  <ul className="mt-4 flex flex-wrap gap-1.5">
-                    {group.core.map((s) => (
-                      <li key={s} className="rounded-md bg-ink px-2 py-1 text-xs font-semibold text-paper">
-                        {s}
-                      </li>
-                    ))}
-                    {group.rest.map((s) => (
-                      <li key={s} className="rounded-md border border-line px-2 py-1 text-xs font-medium text-ink">
-                        {s}
-                      </li>
-                    ))}
-                  </ul>
-                </MotionWrapper>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ul className="grid gap-5 md:grid-cols-2">
+          {skillGroups.map((group, i) => (
+            <li key={group.title}>
+              <MotionWrapper delay={(i % 2) * 0.06} className="h-full rounded-[28px] bg-tile p-7 md:p-9">
+                <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">{group.title}</h3>
+                <p className="mt-1 text-[17px] text-muted">{group.blurb}</p>
+                <ul className="mt-6 flex flex-wrap gap-2">
+                  {group.core.map((s) => (
+                    <li key={s} className="rounded-full bg-ink px-3.5 py-1.5 text-[14px] font-medium text-paper">
+                      {s}
+                    </li>
+                  ))}
+                  {group.rest.map((s) => (
+                    <li key={s} className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-[14px] text-ink">
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </MotionWrapper>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

@@ -2,16 +2,16 @@
 
 import { useState, type FormEvent } from "react";
 import MotionWrapper from "./MotionWrapper";
-import SectionHeader from "./SectionHeader";
+import SectionIntro from "./SectionIntro";
 import { siteConfig } from "../lib/site";
 
 const fieldClass =
-  "w-full min-h-12 px-4 py-3 rounded-xl border border-field-line bg-paper text-ink placeholder:text-muted focus:outline-none focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 transition-colors";
+  "w-full min-h-12 rounded-xl border border-field-line bg-surface px-4 py-3 text-[17px] text-ink placeholder:text-muted transition-colors focus:outline-none focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2";
 
 const channels = [
   { label: "Phone", value: siteConfig.phone, href: `tel:${siteConfig.phone.replace(/-/g, "")}` },
-  { label: "GitHub", value: "github.com/fish-shy", href: siteConfig.socials.github },
-  { label: "LinkedIn", value: "in/hafiz-nazwa-nugraha", href: siteConfig.socials.linkedin },
+  { label: "GitHub", value: "fish-shy", href: siteConfig.socials.github },
+  { label: "LinkedIn", value: "hafiz-nazwa-nugraha", href: siteConfig.socials.linkedin },
 ];
 
 export default function Contact() {
@@ -34,107 +34,77 @@ export default function Contact() {
     setSubmitted(true);
   };
 
+  const field = (id: "name" | "email" | "subject", label: string, type: string, placeholder: string, autoComplete?: string) => (
+    <div>
+      <label htmlFor={id} className="mb-2 block text-[15px] font-medium text-ink">
+        {label}
+      </label>
+      <input
+        type={type}
+        id={id}
+        name={id}
+        autoComplete={autoComplete}
+        value={formData[id]}
+        onChange={handleChange}
+        required
+        className={fieldClass}
+        placeholder={placeholder}
+      />
+    </div>
+  );
+
   return (
-    <section id="contact" aria-labelledby="contact-heading" className="px-4 sm:px-6 py-20 md:py-28">
-      <MotionWrapper className="max-w-6xl mx-auto">
-        <SectionHeader id="contact-heading" index="05" label="Contact">
-          Have a web or mobile project? Tell me about it.
-        </SectionHeader>
+    <section id="contact" aria-labelledby="contact-heading" className="px-5 sm:px-6 py-24 md:py-36">
+      <div className="mx-auto max-w-5xl">
+        <SectionIntro
+          id="contact-heading"
+          eyebrow="Contact"
+          lede="Email is the fastest way to reach me. Tell me what you're building and when you need it."
+        >
+          Have a project in mind?
+        </SectionIntro>
 
-        <div className="relative overflow-hidden rounded-3xl border border-line bg-surface p-6 sm:p-10 lg:p-14 grid gap-12 lg:grid-cols-12">
-          <div aria-hidden="true" className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
-          <div className="relative lg:col-span-5">
-            <p className="text-sm text-muted">Email is the fastest way to reach me.</p>
-            <a
-              href={`mailto:${siteConfig.email}`}
-              className="mt-2 inline-block font-display text-[clamp(1rem,4.6vw,1.45rem)] lg:text-[clamp(1rem,1.9vw,1.45rem)] font-semibold tracking-[-0.02em] text-ink underline decoration-accent decoration-2 underline-offset-[6px] hover:text-accent [overflow-wrap:anywhere]"
-            >
-              {siteConfig.email}
-            </a>
+        <MotionWrapper className="flex flex-col items-center gap-6">
+          <a
+            href={`mailto:${siteConfig.email}`}
+            className="press inline-flex min-h-14 max-w-full items-center rounded-full bg-accent px-8 text-[17px] font-medium text-on-accent hover:opacity-90 [overflow-wrap:anywhere]"
+          >
+            {siteConfig.email}
+          </a>
+          <ul className="grid w-full max-w-3xl gap-3 sm:grid-cols-3">
+            {channels.map((channel) => {
+              const external = channel.href.startsWith("http");
+              return (
+                <li key={channel.label}>
+                  <a
+                    href={channel.href}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "me noopener noreferrer" : undefined}
+                    className="press flex min-h-16 flex-col justify-center rounded-2xl bg-tile px-5 py-3 text-center hover:bg-line"
+                  >
+                    <span className="text-[13px] text-muted">{channel.label}</span>
+                    <span className="text-[17px] font-medium text-ink">{channel.value}</span>
+                    {external && <span className="sr-only"> (opens in a new tab)</span>}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </MotionWrapper>
 
-            <dl className="mt-10 border-y border-line divide-y divide-line">
-              {channels.map((channel) => {
-                const external = channel.href.startsWith("http");
-                return (
-                  <div key={channel.label} className="flex items-center justify-between gap-4 py-3">
-                    <dt className="text-sm text-muted">{channel.label}</dt>
-                    <dd>
-                      <a
-                        href={channel.href}
-                        target={external ? "_blank" : undefined}
-                        rel={external ? "me noopener noreferrer" : undefined}
-                        className="inline-flex items-center min-h-11 text-ink font-medium hover:text-accent transition-colors"
-                      >
-                        {channel.value}
-                        {external && <span className="sr-only"> (opens in a new tab)</span>}
-                      </a>
-                    </dd>
-                  </div>
-                );
-              })}
-              <div className="flex items-center justify-between gap-4 py-3 min-h-[3.25rem]">
-                <dt className="text-sm text-muted">Location</dt>
-                <dd className="text-ink font-medium">
-                  {siteConfig.address.locality}, Indonesia
-                </dd>
-              </div>
-            </dl>
-          </div>
-
-          <form onSubmit={handleSubmit} className="relative lg:col-span-6 lg:col-start-7 space-y-5">
+        <MotionWrapper className="mx-auto mt-14 max-w-3xl rounded-[28px] bg-tile p-6 sm:p-10">
+          <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">Or write it here.</h3>
+          <p className="mt-1 text-[15px] text-muted">
+            This opens a draft in your own email app. Nothing is stored on this site.
+          </p>
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-ink mb-2">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  autoComplete="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className={fieldClass}
-                  placeholder="Your name"
-                />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-ink mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  autoComplete="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className={fieldClass}
-                  placeholder="email@example.com"
-                />
-              </div>
+              {field("name", "Name", "text", "Your name", "name")}
+              {field("email", "Email", "email", "email@example.com", "email")}
             </div>
-
+            {field("subject", "Subject", "text", "What the project is")}
             <div>
-              <label htmlFor="subject" className="block text-sm font-medium text-ink mb-2">
-                Subject
-              </label>
-              <input
-                type="text"
-                id="subject"
-                name="subject"
-                value={formData.subject}
-                onChange={handleChange}
-                required
-                className={fieldClass}
-                placeholder="What the project is"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-ink mb-2">
+              <label htmlFor="message" className="mb-2 block text-[15px] font-medium text-ink">
                 Message
               </label>
               <textarea
@@ -143,29 +113,24 @@ export default function Contact() {
                 value={formData.message}
                 onChange={handleChange}
                 required
-                rows={6}
+                rows={5}
                 className={`${fieldClass} resize-y`}
                 placeholder="Scope, timeline, and anything I should know"
               />
             </div>
-
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              <button
-                type="submit"
-                className="inline-flex items-center justify-center min-h-12 px-6 rounded-xl bg-accent text-on-accent font-semibold hover:opacity-90 transition-opacity"
-              >
-                Draft this email
-              </button>
-              <p className="text-sm text-muted">Nothing is stored on this site.</p>
-            </div>
-
-            <p role="status" className="text-sm text-ink min-h-[1.25rem]">
+            <button
+              type="submit"
+              className="press inline-flex min-h-12 items-center rounded-full bg-ink px-7 text-[17px] font-medium text-paper hover:opacity-90"
+            >
+              Draft this email
+            </button>
+            <p role="status" className="min-h-[1.25rem] text-[15px] text-ink">
               {submitted &&
                 `Your email app should now have a draft ready to send. If nothing opened, write to ${siteConfig.email} directly.`}
             </p>
           </form>
-        </div>
-      </MotionWrapper>
+        </MotionWrapper>
+      </div>
     </section>
   );
 }
