@@ -30,7 +30,7 @@ Every text pairing was checked with `.claude/skills/antislop-human/contrast-chec
 
 ## Decisions
 
-- Hero: centred, Apple product-page layout. Accent headline label, the name as the display title, one sentence, a filled pill button and a text link. Below it, one 3D object: an iridescent, slowly morphing blue form with a thin metal ring, lit asymmetrically. It leans toward the cursor and settles back and smaller as the hero scrolls away. Rendering stops off screen; reduced motion holds it still.
+- Hero: centred, Apple product-page layout. Accent headline label, the name as the display title, one sentence, a filled pill button and a text link. Below it, a liquid-glass scene: a frosted glass rounded square (echoing the mark), a small glass sphere and a glass ring, all refracting soft blue, cyan and white lights that drift behind them. The glass is real transmission, so the colour comes from what it bends. The group leans toward the cursor and settles back and smaller as the hero scrolls away; the canvas edges fade so the glow never ends on a hard line. Rendering stops off screen; reduced motion holds it still.
 - Work: CreativeChain as a full-width tile, then a two-column grid of the other featured projects. Each tile has the context label, title, description, stack and link on top, and the screenshot rising from the bottom edge, growing from 90% to full size as it scrolls into view. The smaller projects sit in a horizontal rail that scrolls natively with snap, with previous/next buttons for mouse users.
 - About: rounded portrait beside three short paragraphs, then four figure tiles. Every figure comes from the CV or this page.
 - Experience: the CV content in grouped tiles (work, achievements, training) with a Download CV link.
