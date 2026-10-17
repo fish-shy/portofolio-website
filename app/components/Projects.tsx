@@ -13,8 +13,6 @@ type Project = {
   /** Public URL, or null when the work cannot be linked. */
   link: string | null;
   isPrivate: boolean;
-  /** Width / height of the visible part of the screenshot. */
-  aspect: string;
 };
 
 // Projects with a real screenshot get a full-width row; the rest only have a
@@ -29,7 +27,6 @@ const featured: Project[] = [
     technologies: ["Solana", "Arweave", "Web3", "NFT"],
     link: "https://creativechain.my.id",
     isPrivate: false,
-    aspect: "480 / 252",
   },
   {
     title: "Village Budget Monitoring System",
@@ -40,8 +37,6 @@ const featured: Project[] = [
     technologies: ["Next.js", "Prisma", "OpenRouter", "Tailwind CSS"],
     link: null,
     isPrivate: true,
-    // The bottom of this capture is empty page, so it is trimmed from the top down.
-    aspect: "2559 / 1000",
   },
   {
     title: "CLINICALgo",
@@ -51,7 +46,6 @@ const featured: Project[] = [
     technologies: ["Web application", "QA testing", "Clinic management"],
     link: null,
     isPrivate: true,
-    aspect: "2540 / 1306",
   },
   {
     title: "SmartCal",
@@ -62,11 +56,10 @@ const featured: Project[] = [
     technologies: ["TensorFlow", "Computer vision", "Streamlit", "React", "Express", "Tailwind CSS"],
     link: "https://fe-smartcal-656502826232.asia-southeast2.run.app/",
     isPrivate: false,
-    aspect: "2550 / 1432",
   },
 ];
 
-const more: Omit<Project, "aspect">[] = [
+const more: Project[] = [
   {
     title: "E-learning mobile app",
     description:
@@ -156,10 +149,8 @@ function FeatureRow({ project, flip }: { project: Project; flip: boolean }) {
       </div>
 
       <div className={flip ? "lg:order-1" : ""}>
-        <div
-          style={{ aspectRatio: project.aspect }}
-          className="relative overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_24px_48px_-28px_rgba(0,0,0,0.35)]"
-        >
+        {/* Every screenshot shares one 16:9 frame so the rows line up; wider captures lose a sliver at the sides. */}
+        <div className="relative aspect-video overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_24px_48px_-28px_rgba(0,0,0,0.35)]">
           <Image
             src={project.image}
             alt={`Screenshot of ${project.title}`}
