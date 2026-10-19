@@ -5,9 +5,9 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 
 const navigationLinks = [
-  { label: "Work", href: "#projects" },
   { label: "About", href: "#about" },
   { label: "Experience", href: "#experience" },
+  { label: "Work", href: "#projects" },
   { label: "Stack", href: "#skills" },
   { label: "Contact", href: "#contact" },
 ];

@@ -101,11 +101,3 @@ body {
     backdrop-filter: none;
   }
 }
-
-/* Horizontal rails scroll natively with momentum and snap, without a visible bar. */
-.rail {
-  scrollbar-width: none;
-}
-.rail::-webkit-scrollbar {
-  display: none;
-}
