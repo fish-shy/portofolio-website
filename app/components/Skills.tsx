@@ -52,21 +52,23 @@ export default function Skills() {
         <ul className="grid gap-5 md:grid-cols-2">
           {skillGroups.map((group, i) => (
             <li key={group.title}>
-              <MotionWrapper delay={(i % 2) * 0.06} className="h-full rounded-[28px] bg-tile p-7 md:p-9">
-                <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">{group.title}</h3>
-                <p className="mt-1 text-[17px] text-muted">{group.blurb}</p>
-                <ul className="mt-6 flex flex-wrap gap-2">
-                  {group.core.map((s) => (
-                    <li key={s} className="rounded-full bg-ink px-3.5 py-1.5 text-[14px] font-medium text-paper">
-                      {s}
-                    </li>
-                  ))}
-                  {group.rest.map((s) => (
-                    <li key={s} className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-[14px] text-ink">
-                      {s}
-                    </li>
-                  ))}
-                </ul>
+              <MotionWrapper delay={(i % 2) * 0.06} className="h-full">
+                <div className="card spotlight h-full rounded-[28px] p-7 md:p-9">
+                  <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">{group.title}</h3>
+                  <p className="mt-1 text-[17px] text-muted">{group.blurb}</p>
+                  <ul className="mt-6 flex flex-wrap gap-2">
+                    {group.core.map((s) => (
+                      <li key={s} className="rounded-full bg-ink px-3.5 py-1.5 text-[14px] font-medium text-paper">
+                        {s}
+                      </li>
+                    ))}
+                    {group.rest.map((s) => (
+                      <li key={s} className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-[14px] text-ink">
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </MotionWrapper>
             </li>
           ))}

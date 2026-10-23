@@ -80,7 +80,7 @@ export default function Contact() {
                     href={channel.href}
                     target={external ? "_blank" : undefined}
                     rel={external ? "me noopener noreferrer" : undefined}
-                    className="press flex min-h-16 flex-col justify-center rounded-2xl bg-tile px-5 py-3 text-center hover:bg-line"
+                    className="card spotlight press flex min-h-16 flex-col justify-center rounded-2xl px-5 py-3 text-center"
                   >
                     <span className="text-[13px] text-muted">{channel.label}</span>
                     <span className="text-[17px] font-medium text-ink">{channel.value}</span>
@@ -92,43 +92,45 @@ export default function Contact() {
           </ul>
         </MotionWrapper>
 
-        <MotionWrapper className="mx-auto mt-14 max-w-3xl rounded-[28px] bg-tile p-6 sm:p-10">
-          <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">Or write it here.</h3>
-          <p className="mt-1 text-[15px] text-muted">
-            This opens a draft in your own email app. Nothing is stored on this site.
-          </p>
-          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-            <div className="grid gap-5 sm:grid-cols-2">
-              {field("name", "Name", "text", "Your name", "name")}
-              {field("email", "Email", "email", "email@example.com", "email")}
-            </div>
-            {field("subject", "Subject", "text", "What the project is")}
-            <div>
-              <label htmlFor="message" className="mb-2 block text-[15px] font-medium text-ink">
-                Message
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                required
-                rows={5}
-                className={`${fieldClass} resize-y`}
-                placeholder="Scope, timeline, and anything I should know"
-              />
-            </div>
-            <button
-              type="submit"
-              className="press inline-flex min-h-12 items-center rounded-full bg-ink px-7 text-[17px] font-medium text-paper hover:opacity-90"
-            >
-              Draft this email
-            </button>
-            <p role="status" className="min-h-[1.25rem] text-[15px] text-ink">
-              {submitted &&
-                `Your email app should now have a draft ready to send. If nothing opened, write to ${siteConfig.email} directly.`}
+        <MotionWrapper className="mx-auto mt-14 max-w-3xl">
+          <div className="card spotlight rounded-[28px] p-6 sm:p-10">
+            <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">Or write it here.</h3>
+            <p className="mt-1 text-[15px] text-muted">
+              This opens a draft in your own email app. Nothing is stored on this site.
             </p>
-          </form>
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                {field("name", "Name", "text", "Your name", "name")}
+                {field("email", "Email", "email", "email@example.com", "email")}
+              </div>
+              {field("subject", "Subject", "text", "What the project is")}
+              <div>
+                <label htmlFor="message" className="mb-2 block text-[15px] font-medium text-ink">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  rows={5}
+                  className={`${fieldClass} resize-y`}
+                  placeholder="Scope, timeline, and anything I should know"
+                />
+              </div>
+              <button
+                type="submit"
+                className="press inline-flex min-h-12 items-center rounded-full bg-ink px-7 text-[17px] font-medium text-paper hover:opacity-90"
+              >
+                Draft this email
+              </button>
+              <p role="status" className="min-h-[1.25rem] text-[15px] text-ink">
+                {submitted &&
+                  `Your email app should now have a draft ready to send. If nothing opened, write to ${siteConfig.email} directly.`}
+              </p>
+            </form>
+          </div>
         </MotionWrapper>
       </div>
     </section>

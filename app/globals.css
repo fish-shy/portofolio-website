@@ -23,7 +23,7 @@
   --tile: #161617;
   --ink: #f5f5f7;
   --muted: #a1a1a6;
-  --line: #2c2c2e;
+  --line: #3a3a3c;
   --field-line: #6e6e73;
   --accent: #2997ff;
   --on-accent: #000000;
@@ -99,5 +99,104 @@ body {
     background: var(--paper);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+}
+
+/* Cards: a surface that reads as its own object at rest. White with a hairline and a soft
+   shadow on the light page; on black, a lifted grey with a light hairline, since a shadow
+   would not show. */
+:root {
+  --card: #ffffff;
+  --card-line: #dcdce1;
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 28px -18px rgba(0, 0, 0, 0.22);
+}
+.dark {
+  --card: #1c1c1e;
+  --card-line: rgba(255, 255, 255, 0.14);
+  --card-shadow: none;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  box-shadow: var(--card-shadow);
+}
+
+/* Cursor spotlight, the hover for every card: a soft light under the pointer, the card's edge
+   lit where the pointer is nearest, and a 4px lift. SpotlightTracker writes the pointer
+   position into --x and --y. The light is kept faint enough that grey text at its brightest
+   point stays above AA: 4.66:1 on white in light mode, 5.24:1 in dark mode. */
+:root {
+  --spot-fill: color-mix(in srgb, var(--accent) 6%, transparent);
+  --spot-edge: var(--accent);
+}
+.dark {
+  --spot-fill: color-mix(in srgb, var(--accent) 16%, transparent);
+  --spot-edge: var(--accent);
+}
+
+.spotlight {
+  position: relative;
+  isolation: isolate;
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 320ms ease,
+    background-color 200ms ease;
+}
+.spotlight::before,
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+/* The light sits above the card's own background and below its content; on a screenshot
+   frame the picture covers it, so only the edge shows there. */
+.spotlight::before {
+  z-index: -1;
+  background: radial-gradient(22rem circle at var(--x, 50%) var(--y, 50%), var(--spot-fill), transparent 60%);
+}
+/* A ring laid over the card's own 1px border: the mask keeps only the padding band, so the
+   gradient shows as the border lighting up near the pointer. */
+.spotlight::after {
+  inset: -1px;
+  padding: 1.5px;
+  background: radial-gradient(20rem circle at var(--x, 50%) var(--y, 50%), var(--spot-edge), transparent 70%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .spotlight:hover,
+  [data-spotlight-zone]:hover .spotlight {
+    transform: translateY(-4px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 22px 44px -22px rgba(0, 0, 0, 0.32);
+  }
+  .spotlight:hover::before,
+  .spotlight:hover::after,
+  [data-spotlight-zone]:hover .spotlight::before,
+  [data-spotlight-zone]:hover .spotlight::after {
+    opacity: 1;
+  }
+  /* Pressing a lifted link card still gives the press feedback. */
+  .spotlight.press:active {
+    transform: translateY(-4px) scale(0.97);
+    transition-duration: 120ms;
+  }
+}
+
+/* Reduced motion: the light still follows, nothing moves. */
+@media (prefers-reduced-motion: reduce) {
+  .spotlight:hover,
+  [data-spotlight-zone]:hover .spotlight,
+  .spotlight.press:active {
+    transform: none;
   }
 }

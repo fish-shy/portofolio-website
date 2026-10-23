@@ -52,11 +52,13 @@ export default function About() {
         <ul className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {facts.map((fact, i) => (
             <li key={fact.label}>
-              <MotionWrapper delay={i * 0.05} className="h-full rounded-[24px] bg-tile p-6">
-                <p className="font-display text-[44px] font-semibold leading-none tracking-[-0.03em] text-ink">
-                  {fact.figure}
-                </p>
-                <p className="mt-3 text-[15px] leading-snug text-muted">{fact.label}</p>
+              <MotionWrapper delay={i * 0.05} className="h-full">
+                <div className="card spotlight h-full rounded-[24px] p-6">
+                  <p className="font-display text-[44px] font-semibold leading-none tracking-[-0.03em] text-ink">
+                    {fact.figure}
+                  </p>
+                  <p className="mt-3 text-[15px] leading-snug text-muted">{fact.label}</p>
+                </div>
               </MotionWrapper>
             </li>
           ))}

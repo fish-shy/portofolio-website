@@ -124,7 +124,7 @@ const more: SmallProject[] = [
 ];
 
 function noLinkNote(project: Project) {
-  return project.isPrivate ? "Private project, no public link" : "Client project, no public link";
+  return project.isPrivate ? "Private project, no public link" : "Private project, no public link";
 }
 
 function ProjectLink({ project }: { project: Project }) {
@@ -157,15 +157,17 @@ function FlagshipShot({ shot }: { shot: Screenshot }) {
 
   return (
     <div ref={ref} className="mx-auto mt-10 max-w-6xl px-5 sm:px-6 md:mt-14">
-      <motion.div style={{ scale }} className="overflow-hidden rounded-[18px] border border-line bg-tile md:rounded-[28px]">
-        <Image
-          src={shot.src}
-          alt={shot.alt}
-          width={shot.width}
-          height={shot.height}
-          sizes="(max-width: 1200px) 100vw, 72rem"
-          className="h-auto w-full"
-        />
+      <motion.div style={{ scale }}>
+        <div className="card spotlight overflow-hidden rounded-[18px] md:rounded-[28px]">
+          <Image
+            src={shot.src}
+            alt={shot.alt}
+            width={shot.width}
+            height={shot.height}
+            sizes="(max-width: 1200px) 100vw, 72rem"
+            className="h-auto w-full"
+          />
+        </div>
       </motion.div>
     </div>
   );
@@ -174,28 +176,31 @@ function FlagshipShot({ shot }: { shot: Screenshot }) {
 function FeaturedRow({ project }: { project: ShowcaseProject }) {
   return (
     <li className="border-t border-line py-12 md:py-16">
-      <MotionWrapper className="grid gap-8 lg:grid-cols-12 lg:items-center lg:gap-12">
-        <div className="max-w-2xl lg:col-span-5">
-          {project.context && <p className="text-[15px] font-semibold text-accent">{project.context}</p>}
-          <h3 className="mt-2 font-display text-[clamp(1.75rem,3.6vw,2.5rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-balance text-ink">
-            {project.title}
-          </h3>
-          <p className="mt-4 text-[17px] leading-relaxed text-muted">{project.description}</p>
-          <p className="mt-4 text-[13px] text-muted">{project.technologies.join(" · ")}</p>
-          <div className="mt-2">
-            <ProjectLink project={project} />
+      {/* The whole row is the hover target; the screenshot is the card that lifts and lights. */}
+      <MotionWrapper>
+        <div data-spotlight-zone className="grid gap-8 lg:grid-cols-12 lg:items-center lg:gap-12">
+          <div className="max-w-2xl lg:col-span-5">
+            {project.context && <p className="text-[15px] font-semibold text-accent">{project.context}</p>}
+            <h3 className="mt-2 font-display text-[clamp(1.75rem,3.6vw,2.5rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-balance text-ink">
+              {project.title}
+            </h3>
+            <p className="mt-4 text-[17px] leading-relaxed text-muted">{project.description}</p>
+            <p className="mt-4 text-[13px] text-muted">{project.technologies.join(" · ")}</p>
+            <div className="mt-2">
+              <ProjectLink project={project} />
+            </div>
           </div>
-        </div>
-        <div className="lg:col-span-7">
-          <div className="overflow-hidden rounded-[16px] border border-line bg-tile md:rounded-[24px]">
-            <Image
-              src={project.shot.src}
-              alt={project.shot.alt}
-              width={project.shot.width}
-              height={project.shot.height}
-              sizes="(max-width: 1024px) 100vw, 38rem"
-              className="h-auto w-full"
-            />
+          <div className="lg:col-span-7">
+            <div className="card spotlight overflow-hidden rounded-[16px] md:rounded-[24px]">
+              <Image
+                src={project.shot.src}
+                alt={project.shot.alt}
+                width={project.shot.width}
+                height={project.shot.height}
+                sizes="(max-width: 1024px) 100vw, 38rem"
+                className="h-auto w-full"
+              />
+            </div>
           </div>
         </div>
       </MotionWrapper>
@@ -211,27 +216,32 @@ function MoreList() {
       </h3>
       <ul className="mt-6 md:mt-8">
         {more.map((project) => (
+          // On hover the row becomes a card: it takes the tile background and the spotlight,
+          // and the hairlines either side of it step aside. Tailwind applies hover only where
+          // a pointer can hover.
           <li
             key={project.title}
-            className="grid grid-cols-[5rem_1fr] gap-x-4 gap-y-3 border-t border-line py-6 sm:grid-cols-[7rem_1fr] sm:gap-x-6 md:grid-cols-[7rem_1fr_14rem] md:gap-x-8"
+            className="group border-t border-line transition-colors duration-200 hover:border-transparent [&:hover+li]:border-transparent"
           >
-            {/* The logo sits beside the project name, so it carries no alt text of its own. */}
-            <div className="relative aspect-[16/10] overflow-hidden rounded-[12px] border border-line bg-white sm:rounded-[14px]">
-              <Image
-                src={project.logo}
-                alt=""
-                fill
-                sizes="7rem"
-                className={project.logoBleed ? "object-cover" : "object-contain p-1.5"}
-              />
-            </div>
-            <div className="min-w-0">
-              <h4 className="text-[19px] font-semibold leading-snug tracking-[-0.02em] text-ink">{project.title}</h4>
-              <p className="mt-1 text-[15px] leading-relaxed text-muted">{project.description}</p>
-            </div>
-            <div className="col-start-2 text-[13px] leading-relaxed text-muted md:col-start-auto">
-              <p>{project.technologies.join(" · ")}</p>
-              <p className="mt-1">{noLinkNote(project)}</p>
+            <div className="spotlight -mx-4 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-3 rounded-[20px] border border-transparent px-4 py-6 group-hover:border-[var(--card-line)] group-hover:bg-[var(--card)] sm:grid-cols-[7rem_1fr] sm:gap-x-6 md:grid-cols-[7rem_1fr_14rem] md:gap-x-8">
+              {/* The logo sits beside the project name, so it carries no alt text of its own. */}
+              <div className="relative aspect-[16/10] overflow-hidden rounded-[12px] border border-line bg-white sm:rounded-[14px]">
+                <Image
+                  src={project.logo}
+                  alt=""
+                  fill
+                  sizes="7rem"
+                  className={project.logoBleed ? "object-cover" : "object-contain p-1.5"}
+                />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-[19px] font-semibold leading-snug tracking-[-0.02em] text-ink">{project.title}</h4>
+                <p className="mt-1 text-[15px] leading-relaxed text-muted">{project.description}</p>
+              </div>
+              <div className="col-start-2 text-[13px] leading-relaxed text-muted md:col-start-auto">
+                <p>{project.technologies.join(" · ")}</p>
+                <p className="mt-1">{noLinkNote(project)}</p>
+              </div>
             </div>
           </li>
         ))}
@@ -254,7 +264,7 @@ export default function Projects() {
         </SectionIntro>
       </div>
 
-      <article aria-labelledby="flagship-title">
+      <article aria-labelledby="flagship-title" data-spotlight-zone>
         <MotionWrapper className="mx-auto max-w-5xl px-5 sm:px-6">
           <div className="grid gap-x-12 gap-y-5 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-7">

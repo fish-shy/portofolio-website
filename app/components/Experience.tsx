@@ -67,9 +67,11 @@ const training = [
 
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <MotionWrapper className="rounded-[28px] bg-tile px-6 py-2 md:px-10 md:py-4">
-      <h3 className="pt-6 text-[13px] font-semibold text-muted">{title}</h3>
-      {children}
+    <MotionWrapper>
+      <div className="card spotlight rounded-[28px] px-6 py-2 md:px-10 md:py-4">
+        <h3 className="pt-6 text-[13px] font-semibold text-muted">{title}</h3>
+        {children}
+      </div>
     </MotionWrapper>
   );
 }
